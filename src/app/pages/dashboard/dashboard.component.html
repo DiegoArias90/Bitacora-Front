@@ -1,0 +1,36 @@
+<div class="layout-widgets">
+    <div class="p-grid p-text-center">
+        <div *ngIf="authService.hasRoles('ROLE_USER')" class="p-col-12 p-md-6 p-xl-3" (click)="bitacora()" style="cursor: pointer;">
+            <div class="card overview-box-2 teal">
+                <div class="overview-info">
+                    <h3>Bitácora Electrónica</h3>
+                </div>
+                <i class="pi pi-tablet"></i>
+            </div>
+        </div>
+        <div *ngIf="authService.hasRoles('ROLE_ADMIN')" class="p-col-12 p-md-6 p-xl-3" (click)="residentes()" style="cursor: pointer;">
+            <div class="card overview-box-2 pink">
+                <div class="overview-help">
+                    <h3>Residentes</h3>
+                </div>
+                <i class="pi pi-calendar-plus"></i>
+            </div>
+        </div>
+        <div *ngIf="authService.hasRoles('ROLE_ADMIN')" class="p-col-12 p-md-6 p-xl-3" (click)="empleados()" style="cursor: pointer;">
+            <div class="card overview-box-2 blue">
+                <div class="overview-warning">
+                    <h3>Empleados</h3>
+                </div>
+                <i class="p-button-rounded pi pi-id-card"></i>
+            </div>
+        </div>
+        <div *ngIf="authService.hasRoles('ROLE_USER')" class="p-col-12 p-md-6 p-xl-3" (click)="eventos()" style="cursor: pointer;">
+            <div class="card overview-box-2 pink">
+                <div class="overview-secondary">
+                    <h3>Eventos</h3>
+                </div>
+                <i class="pi pi-calendar-plus"></i>
+            </div>
+        </div>
+    </div>
+</div>

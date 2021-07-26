@@ -1,0 +1,43 @@
+<!-- CREACION DE VISITANTE -->
+<p-dialog header="Registro de Visitante" 
+          [(visible)]="componentesService.dialogCrearVisitante" 
+          [modal]="true" 
+          [style]="{width: '30vw'}"
+          [maximizable]="true" 
+          [draggable]="true" 
+          [resizable]="true">
+
+    <div class="p-grid">
+        <div class="p-col-12">
+            <div class="card">
+                <form action="">
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col-12 p-md-8">
+                            <label for="cedula">Identificación</label>
+                            <div class="p-inputgroup">
+                                <input type="text" pInputText placeholder="# de cédula" class="p-inputtext-sm" name="cedula" [(ngModel)]="visitanteNuevo.cedula">
+                                <button type="button" pButton icon="pi pi-search"></button>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-12 p-md-4">
+                            <label for="antecedentes">Antecedentes</label>
+                            <input id="antecedentes" type="text" pInputText class="p-inputtext-sm" name="antecedentes" [(ngModel)]="visitanteNuevo.antecedentes">
+                        </div>
+                        <div class="p-field p-col-12">
+                            <label for="nombre">Nombre</label>
+                            <input id="nombre" type="text" pInputText class="p-inputtext-sm" name="nombre" [(ngModel)]="visitanteNuevo.nombre">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button (click)="componentesService.dialogCrearVisitante=false" pButton class="p-button-danger p-button-sm" type="button" label="Cancelar" icon="pi pi-times">
+        </button>
+        <button (click)="crearVisitante()" pButton icon="pi pi-save" class="p-button-success p-button-sm" type="button" label="Guardar">
+        </button>
+    </ng-template>
+</p-dialog>
+<!-- CREACION DE VISITANTE -->

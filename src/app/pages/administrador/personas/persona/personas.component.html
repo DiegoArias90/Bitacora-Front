@@ -1,0 +1,241 @@
+<!-- Pantalla Principal -->
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="p-grid table-demo">
+            <div class="p-col-12">
+                <div class="card">
+                    <p-table #dt [value]="personas" [(selection)]="selectedPersonas" dataKey="id"
+                        styleClass="p-datatable-customers" [rowHover]="true" [rows]="10" [paginator]="true"
+                        [filterDelay]="0" [globalFilterFields]="['cedula','nombre','apellido','lote']"
+                        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
+                        [rowsPerPageOptions]="[10,25,50]">
+                        <ng-template pTemplate="caption">
+                            <div>
+                                <p-toolbar>
+                                    <div class="p-toolbar-group-left">
+                                        <h5>Listado de Personas</h5>
+                                    </div>
+                                    <div class="p-toolbar-group-right">
+                                        <span class="p-input-icon-left">
+                                            <i class="pi pi-search"></i>
+                                            <input pInputText type="text"
+                                                (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                placeholder="Busqueda General" />
+                                        </span>
+                                        <button pButton type="button" label="Nuevo" icon="pi pi-plus" iconPos="left"
+                                            class="p-button-success p-button-sm" (click)="openDialogCrearPersona()">
+                                        </button>
+                                    </div>
+                                </p-toolbar>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th style="width: 3rem">#</th>
+                                <th>Identificación</th>
+                                <th>Nombres</th>
+                                <th>Apellidos</th>
+                                <th pSortableColumn="lote"># Lote
+                                    <p-sortIcon field="lote"></p-sortIcon>
+                                </th>
+                                <th>Telefono</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-persona let-rowIndex="rowIndex">
+                            <tr class="p-selectable-row">
+                                <td>
+                                    {{ rowIndex + 1 }}
+                                </td>
+                                <td>{{persona.cedula}}</td>
+                                <td>
+                                    <span class="image-text"
+                                        style="margin-left: .5em;vertical-align: middle">{{persona.nombre}}</span>
+                                </td>
+                                <td>
+                                    <span class="image-text"
+                                        style="margin-left: .5em;vertical-align: middle">{{persona.apellido}}</span>
+                                </td>
+                                <td>{{persona.lote}}
+                                </td>
+                                <td><span class="image-text"
+                                        style="margin-left: .5em;vertical-align: middle">{{persona.telefono}}</span>
+                                </td>
+                                <td style="text-align: center">
+                                    <button pButton 
+                                            pRipple 
+                                            type="button" 
+                                            icon="pi pi-map" 
+                                            class="p-button-rounded p-button-text p-button-sm p-mr-2 p-mb-2" 
+                                            (click)="openDialogVehiculo(persona)"
+                                            title="Vehiculos">
+                                    </button>
+                                    <button pButton 
+                                            pRipple 
+                                            type="button" 
+                                            icon="pi pi-user-plus" 
+                                            class="p-button-rounded p-button-text p-button-sm p-mr-2 p-mb-2" 
+                                            (click)="openDialogEmpleado(persona)"
+                                            title="Empleados">
+                                    </button>
+                                    <button pButton 
+                                            pRipple 
+                                            type="button" 
+                                            icon="pi pi-id-card" 
+                                            class="p-button-rounded p-button-secondary p-button-text p-button-sm p-mr-2 p-mb-2" 
+                                            (click)="openDialogEvento(persona)"
+                                            title="Eventos">
+                                    </button>
+                                    <button pButton 
+                                            pRipple 
+                                            type="button" 
+                                            icon="pi pi-pencil" 
+                                            class="p-button-rounded p-button-info p-button-text p-button-sm p-mr-2 p-mb-2" 
+                                            (click)="openDialogEditarPersona(persona)"
+                                            title="Editar Persona">
+                                    </button>
+                                    <button pButton 
+                                            pRipple 
+                                            type="button" 
+                                            icon="pi pi-trash" 
+                                            class="p-button-rounded p-button-danger p-button-text p-button-sm p-mr-2 p-mb-2" 
+                                            (click)="deletePersona(persona)" 
+                                            title="Eliminar Persona">
+                                    </button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="8">No existe informacion asociada!</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- Pantalla Principal -->
+
+<!-- Dialog Crear - Actualizar -->
+<p-dialog header="{{titulo}}" [(visible)]="dialogPersona" [modal]="true" [style]="{width: '50vw'}" [draggable]="true"
+    [resizable]="false">
+
+    <form #personaForm="ngForm">
+        <div class="p-grid p-fluid">
+            <div class="p-col-12">
+                <div class="card">
+                    <div class="p-grid p-fluid">
+                        <div class="p-col-12 p-md-4">
+                            <div class="p-field">
+                                <label for="name">Cédula</label>
+                                <input type="text" #cedula="ngModel" pInputText placeholder="Cédula" [(ngModel)]="persona.cedula" name="cedula" required>
+                            </div>
+                            <small *ngIf="cedula.invalid && (cedula.touched || cedula.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
+                        </div>
+                        <div class="p-col-12 p-md-4">
+                            <div class="p-field">
+                                <label for="name">Antecedentes</label>
+                                <input type="text" #antecedentes="ngModel" pInputText placeholder="Antecedentes" [(ngModel)]="persona.antecedentes" name="antecedentes" required>
+                            </div>
+                            <small *ngIf="antecedentes.invalid && (antecedentes.touched || antecedentes.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
+                        </div>
+                        <div class="p-col-12 p-md-4">
+                            <div class="p-field">
+                                <label for="name"># Lote</label>
+                                <input type="text" #lote="ngModel" pInputText placeholder="# Lote" [(ngModel)]="persona.lote" name="lote" required>
+                            </div>
+                            <small *ngIf="lote.invalid && (lote.touched || lote.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
+                        </div>
+                        <div class="p-col-12 p-md-6">
+                            <div class="p-field">
+                                <label for="name">Nombres</label>
+                                <input type="text" #nombre="ngModel" pInputText placeholder="Nombres" [(ngModel)]="persona.nombre" name="nombre" required>
+                            </div>
+                            <small *ngIf="nombre.invalid && (nombre.touched || nombre.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
+                        </div>
+                        <div class="p-col-12 p-md-6">
+                            <div class="p-field">
+                                <label for="name">Apellidos</label>
+                                <input type="text" #apellido="ngModel" pInputText placeholder="Apellidos" [(ngModel)]="persona.apellido" name="apellido" required>
+                            </div>
+                            <small *ngIf="apellido.invalid && (apellido.touched || apellido.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
+                        </div>
+                        <div class="p-col-12 p-md-6">
+                            <div class="p-field">
+                                <label for="name">Email</label>
+                                <input type="text" #email="ngModel" pInputText placeholder="Email" [(ngModel)]="persona.email" name="email" required>
+                            </div>
+                            <small *ngIf="email.invalid && (email.touched || email.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
+                        </div>
+                        <div class="p-col-12 p-md-6">
+                            <div class="p-field">
+                                <label for="name">Tipo Persona</label>
+                                <p-dropdown name="tipoPersonas" [options]="tipoPersonas" [(ngModel)]="persona.tipoPersona" optionLabel="nombre" optionValue="persona.id" [showClear]="true" placeholder="Tipo de Persona"></p-dropdown> 
+                                <!-- <select class="form-control" [(ngModel)]="persona.tipoPersona" name="tipoPersona" id="tipoPersona">
+                                    <option *ngFor="let tipo of tipoPersonas" [ngValue]="tipo">{{tipo.nombre}}</option>
+                                </select> -->
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-6">
+                            <div class="p-field">
+                                <label for="name">Telefono</label>
+                                <input type="text" pInputText placeholder="Telefono" [(ngModel)]="persona.telefono" name="telefono">
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-6">
+                            <div class="p-field-checkbox">
+                                <p-checkbox name="group1"  id="estado" [(ngModel)]="persona.estado" [binary]="true" name="estado"></p-checkbox>
+                                <label for="ny">Activo</label>
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-12">
+                            <div class="p-field">
+                                <label for="name">Observaciones</label>
+                                <textarea rows="5" cols="30" placeholder="Observaciones" pInputTextarea [(ngModel)]="persona.observacion" name="observacion"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <p-footer>
+        <button pButton 
+                (click)="dialogPersona=false" 
+                class="p-button-danger p-button-sm"
+                type="button" 
+                label="Cancelar" 
+                icon="pi pi-times">
+            </button>
+        <button pButton 
+                icon="pi pi-save" 
+                class="p-button-info p-button-sm" 
+                type="button"
+                (click)="crearPersona()" 
+                *ngIf="!persona.id" 
+                label="Guardar"
+                [disabled]="!personaForm.form.valid">
+            </button>
+        <button pButton 
+                icon="pi pi-save" 
+                class="p-button-success p-button-sm" 
+                type="button"
+                (click)='updatePersona()' 
+                *ngIf="persona.id" 
+                label="Actualizar"
+                [disabled]="!personaForm.form.valid">
+            </button>
+    </p-footer>
+
+
+</p-dialog>
+<!-- Dialog Crear - Actualizar -->
+
+
+<app-empleado *ngIf="personaSeleccionada" [persona]="personaSeleccionada"></app-empleado>
+<app-evento *ngIf="personaSeleccionada" [persona]="personaSeleccionada"></app-evento>
+<app-vehiculo *ngIf="personaSeleccionada" [persona]="personaSeleccionada"></app-vehiculo>

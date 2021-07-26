@@ -1,0 +1,271 @@
+<!-- Dialog Principal -->
+<p-dialog header="Eventos" [(visible)]="componentesService.dialogEvento" [modal]="true" [style]="{width: '60vw'}" [draggable]="true"
+    [resizable]="false">
+
+    <div class="p-grid">
+        <div class="p-col-12">
+            <!--Card Propietario -->
+            <div class="card">
+                <p-fieldset legend="Datos Persona" [transitionOptions]="'1ms'">
+                    <div class="p-fluid p-formgrid p-grid" *ngIf="persona">
+                        <div class="p-field p-col-12 p-md-3">
+                            <label for="nombre">Nombre</label>
+                            <input id="nombre" type="text" pInputText value="{{persona.nombre}}" disabled>
+                        </div>
+                        <div class="p-field p-col-12 p-md-3">
+                            <label for="apellido">Apellido</label>
+                            <input id="apellido" type="text" pInputText value="{{persona.apellido}}" disabled>
+                        </div>
+                        <div class="p-field p-col-12 p-md-3">
+                            <label for="zip">Telefonos</label>
+                            <input id="zip" type="text" pInputText value="{{persona.telefono}}" disabled>
+                        </div>
+                        <div class="p-field p-col-12 p-md-2">
+                            <label for="lote">Lote</label>
+                            <input id="lote" type="text" pInputText value="{{persona.lote}}" disabled>
+                        </div>
+                        <div class="p-field p-col-12 p-md-1">
+                            <label for="accion">Accion</label>
+                                    <button (click)="openDialogCrearEvento()" 
+                                            pButton 
+                                            type="button" 
+                                            icon="pi pi-plus" 
+                                            class="p-button-rounded p-button-success p-button-plain p-button-text" 
+                                            title="Agregar Evento">
+                                    </button>
+                        </div>
+                    </div>
+                </p-fieldset>                
+            </div>
+            <!--Card Propietario -->
+        <!--Empleados por Propietario -->
+        <div class="p-grid table-demo">
+            <div class="p-col-12">
+                <p-messages severity="info" *ngIf="persona.eventos.length == 0 ">
+                    <ng-template pTemplate>
+                        <span class="custom-message"> No tiene eventos asociados!</span>
+                    </ng-template>
+                </p-messages>
+                <p-fieldset legend="Listado de Eventos" *ngIf="persona.eventos.length > 0 ">
+                    <div class="card">
+                        <p-table #dt dataKey="id" 
+                                 [value]="persona.eventos"
+                                 styleClass="p-datatable-customers" [rowHover]="true" 
+                                 [rows]="10" [paginator]="true"
+                                 [filterDelay]="0" [globalFilterFields]="['cedula','nombre','apellido','lote']"
+                                 currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
+                                 [rowsPerPageOptions]="[10,25,50]">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width: 3rem">#</th>
+                                    <th>Responsable</th>
+                                    <th>Fecha Inicio</th>
+                                    <th>Fecha Fin</th>
+                                    <th>Tipo Evento</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-evento let-rowIndex="rowIndex">
+                                <tr class="p-selectable-row">
+                                    <td >
+                                        {{ rowIndex + 1 }}
+                                    </td>
+                                    <td>
+                                        <span class="image-text"
+                                            style="margin-left: .5em;vertical-align: middle">{{evento.responsable}}</span>
+                                    </td>
+                                    <td>
+                                        <span class="image-text"
+                                            style="margin-left: .5em;vertical-align: middle">{{evento.fechaCreacion}}</span>
+                                    </td>
+                                    <td>
+                                        <span class="image-text"
+                                            style="margin-left: .5em;vertical-align: middle">{{evento.fechaFinalizacion}}</span>
+                                    </td>
+                                    <td><span class="image-text"
+                                            style="margin-left: .5em;vertical-align: middle">{{evento.tipoEvento.nombreEvento}}</span>
+                                    </td>
+                                    <td>
+                                        <button pButton 
+                                                pRipple 
+                                                type="button" 
+                                                icon="pi pi-pencil" 
+                                                class="p-button-rounded p-button-info p-button-text p-button-sm p-mr-2 p-mb-2" 
+                                                (click)="openDialogEditarEvento(evento)"
+                                                
+                                                title="Editar Evento">
+                                        </button>
+                                        <button pButton 
+                                                pRipple 
+                                                type="button" 
+                                                icon="pi pi-trash" 
+                                                class="p-button-rounded p-button-danger p-button-text p-button-sm p-mr-2 p-mb-2" 
+                                                (click)="deleteEvento(evento)"
+                                                title="Eliminar Evento">
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </p-fieldset>
+            </div>
+        </div>
+        <!--Eventos por Propietario -->
+    </div>
+</div>
+
+</p-dialog>
+<!-- Dialog Principal -->
+
+<!-- Dialog Crear - Actualizar -->
+<p-dialog header="{{titulo}}" [(visible)]="dialogEvento" [modal]="true" [style]="{width: '750px'}" [draggable]="true"
+    [resizable]="false">
+
+    <form #eventoForm="ngForm">
+        <div class="p-grid p-fluid">
+            <div class="p-col-12">
+                <div class="card">
+                    <div class="p-grid p-fluid">
+                        <div class="p-col-12 p-md-4">
+                            <div class="p-field">
+                                <label for="responsable">Responsable</label>
+                                <input class="p-inputtext-sm" type="text" #cedula="ngModel" pInputText placeholder="Responsable" [(ngModel)]="evento.responsable" name="cedula" required>
+                            </div>
+                            <small *ngIf="cedula.invalid && (cedula.touched || cedula.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
+                        </div>
+                        <div class="p-col-12 p-md-4">
+                            <div class="p-field">
+                                <label for="name">Tipo Evento</label>
+                                <p-dropdown name="tipoPersonas" [options]="tipoEventos" [(ngModel)]="evento.tipoEvento" optionLabel="nombreEvento" optionValue="evento.id" [showClear]="true" placeholder="Tipo de Empleo"></p-dropdown> 
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-2" *ngIf="!evento.id">
+                            <div class="p-col-12 p-md-4">
+                                <div class="p-field p-text-center">
+                                    <label for="activo">Finalizar</label>
+                                    <br>
+                                    <p-checkbox name="group1"  id="estado" [(ngModel)]="evento.estado" [binary]="false" name="estado"></p-checkbox>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-2">
+                            <div class="p-field">
+                                <label for="name">Lista de Invitados</label>
+                                <input class="p-inputtext-sm" type="file" (change)="seleccionarArchivo($event)" name="listaInvitados" [(ngModel)]="evento.listaInvitados" pInputText>
+                                <!-- <p-fileUpload (change)="seleccionarArchivo($event)" mode="basic" accept="image/*" [maxFileSize]="1000000" class="p-mr-2 p-mb-2 p-d-inline-block"></p-fileUpload> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-grid p-formgrid">
+                        <div class="p-col-12 p-md-6">
+                            <div class="p-field">
+                                <label for="fechaCreacion">Fecha Inicio</label>
+                                <p-calendar class="p-inputtext-sm"
+                                            name="fechaCreacion" 
+                                            inputId="fechaCreacion" 
+                                            [(ngModel)]="evento.fechaCreacion"
+                                            [minDate]="minDate"
+                                            dateFormat="yy-mm-dd"
+                                            (ngModelChange)="cambiarFechaEvento()">
+                                </p-calendar>
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-6">
+                            <div class="p-field">
+                                <label for="fechaFinalizacion">Fecha Fin</label>
+                                <p-calendar class="p-inputtext-sm"
+                                            name="fechaFinalizacion" 
+                                            inputId="fechaFinalizacion" 
+                                            [(ngModel)]="evento.fechaFinalizacion"
+                                            dateFormat="yy-mm-dd">
+                                </p-calendar>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-grid p-formgrid" *ngIf="evento.id">
+                        <div class="p-col-12 p-md-6">
+                            <label for="horaInicio">Hora Inicio</label>
+                            <div class="p-field">
+                                {{evento.horaInicio}}
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-6"></div>
+                    </div>
+                    <div class="p-grid p-formgrid" *ngIf="!evento.id">
+                        <div class="p-col-12 p-md-6">
+                            <div class="p-field">
+                                <label for="horaInicio">Hora Inicio</label>
+                                <p-calendar class="p-inputtext-sm"
+                                            name="horaInicio" 
+                                            inputId="horaInicio" 
+                                            [(ngModel)]="evento.horaInicio"
+                                            hourFormat="12"
+                                            timeOnly=true
+                                            >
+                                </p-calendar>
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-6">
+                            <div class="p-field">
+                                <label for="horaFinalizacion">Hora Fin</label>
+                                <p-calendar class="p-inputtext-sm"
+                                            name="horaFinalizacion" 
+                                            inputId="horaFinalizacion" 
+                                            [(ngModel)]="evento.horaFinalizacion"
+                                            hourFormat="12"
+                                            [readonlyInput]="true"
+                                            timeOnly=true>
+                                </p-calendar>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-grid p-fluid">
+                    <div class="p-col-12 p-md-6">
+                        <div class="p-field">
+                            <label for="detalle">Detalles</label>
+                            <textarea rows="5" cols="30" placeholder="Detalles" pInputTextarea [(ngModel)]="evento.detalle" name="detalle"></textarea>
+                        </div>
+                    </div>
+                    <div class="p-col-12 p-md-6">
+                        <div class="p-field" *ngIf="evento.id">
+                            <label for="novedad">Novedades</label>
+                            <textarea rows="5" cols="30" placeholder="Novedad" pInputTextarea [(ngModel)]="evento.novedad" name="novedad"></textarea>
+                        </div>
+                    </div>  
+                </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <p-footer>
+        <button pButton 
+                (click)="dialogEvento=false" 
+                class="p-button-danger p-button-sm"
+                type="button" 
+                label="Cancelar" 
+                icon="pi pi-times">
+            </button>
+        <button pButton 
+                icon="pi pi-save" 
+                class="p-button-info p-button-sm" 
+                type="button"
+                (click)="crearEvento()" 
+                *ngIf="!evento.id" 
+                label="Guardar"
+                >
+            </button>
+        <button pButton 
+                icon="pi pi-save" 
+                class="p-button-success p-button-sm" 
+                type="button"
+                (click)="subirArchivo()"
+                *ngIf="evento.id" 
+                label="Actualizar">
+            </button>
+    </p-footer>
+
+
+</p-dialog>
+<!-- Dialog Crear - Actualizar -->

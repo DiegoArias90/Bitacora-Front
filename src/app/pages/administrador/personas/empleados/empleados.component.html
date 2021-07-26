@@ -1,0 +1,78 @@
+<!-- Pantalla Principal -->
+<div class="p-grid">
+    <div class="p-col-12">
+        <!--Empleados por Propietario -->
+        <div class="p-grid table-demo">
+            <div class="p-col-12">
+                <div class="card">
+                    <p-table #dt dataKey="id" [value]="empleados"
+                        styleClass="p-datatable-customers" [rowHover]="true" [rows]="10" [paginator]="true"
+                        [filterDelay]="0" [globalFilterFields]="['cedula','nombre','apellido','lote']"
+                        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
+                        [rowsPerPageOptions]="[10,25,50]">
+                        <ng-template pTemplate="caption">
+                            <div>
+                                <p-toolbar>
+                                    <div class="p-toolbar-group-left">
+                                        <h5>Listado de Empleados</h5>
+                                    </div>
+                                    <div class="p-toolbar-group-right">
+                                        <span class="p-input-icon-left">
+                                            <i class="pi pi-search"></i>
+                                            <input pInputText type="text"
+                                                (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                placeholder="Busqueda General" />
+                                        </span>
+                                    </div>
+                                </p-toolbar>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th style="width: 3rem">#</th>
+                                <th>Identificación</th>
+                                <th>Nombres</th>
+                                <th>Apellidos</th>
+                                <th>Ocupacion</th>
+                                <th>Lote</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-empleado let-rowIndex="rowIndex">
+                            <tr class="p-selectable-row">
+                                <td >
+                                    {{ rowIndex + 1 }}
+                                </td>
+                                <td>
+                                    <span class="image-text"
+                                        style="margin-left: .5em;vertical-align: middle">{{empleado.cedula}}</span>
+                                </td>
+                                <td>
+                                    <span class="image-text"
+                                        style="margin-left: .5em;vertical-align: middle">{{empleado.nombre}}</span>
+                                </td>
+                                <td>
+                                    <span class="image-text"
+                                        style="margin-left: .5em;vertical-align: middle">{{empleado.apellido}}</span>
+                                </td>
+                                <td><span class="image-text"
+                                        style="margin-left: .5em;vertical-align: middle">{{empleado.tipoEmpleo.ocupacion}}</span>
+                                </td>
+                                <td><span class="image-text"
+                                    style="margin-left: .5em;vertical-align: middle">{{empleado.persona.lote}}</span>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="8">No existe informacion asociada!</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+        <!--Empleados por Propietario -->
+    </div>
+</div>
+<!-- Pantalla Principal -->
+

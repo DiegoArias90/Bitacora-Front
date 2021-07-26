@@ -1,0 +1,43 @@
+<div class="layout-topbar fast">
+    <div class="layout-topbar-wrapper">
+        <div class="layout-topbar-left">
+            <div class="layout-topbar-logo" id="logolink" style="cursor: pointer; outline: none;" routerLink="/">
+                <!-- <img id="app-logo"
+                     src="../../../assets/layout/images/login.png"  alt="poseidon-layout"> -->
+            </div>
+        </div>
+
+        <div class="layout-topbar-right">
+            <a class="menu-button" href="#" (click)="appMain.onMenuButtonClick($event)">
+                <i class="pi pi-bars"></i>
+            </a>
+
+            <ul class="layout-topbar-actions">
+                <li #profile class="topbar-item user-profile"
+                    [ngClass]="{'active-topmenuitem':appMain.activeTopbarItem === profile}">
+                    <a href="#" (click)="appMain.onTopbarItemClick($event,profile)">
+                        <i class="pi pi-user"></i>
+                        <div class="profile-info">
+                            <h6>{{ user.nombre}} {{ user.apellido}}</h6>
+                            <span>Webmaster</span>
+                        </div>
+                    </a>
+                    <ul class="fadeInDown">
+                        <li class="layout-submenu-header">
+                            <img class="profile-image" src="assets/layout/images/avatar-profile.png" alt="demo">
+                            <div class="profile-info">
+                                <h6>{{ user.nombre}}</h6>
+                            </div>
+                        </li>
+                        <li role="menuitem">
+                            <a (click)="logout()" routerLinkActive="router-link-active"  (click)="appMain.onTopbarSubItemClick($event)">
+                                <i class="pi pi-power-off"></i>
+                                <h6>Logout</h6>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

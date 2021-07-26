@@ -1,0 +1,207 @@
+<!-- Dialog Principal -->
+<p-dialog header="Empleados" [(visible)]="componentesService.dialogEmpleado" [modal]="true" [style]="{width: '60vw'}" [draggable]="true"
+    [resizable]="false">
+
+    <!-- Pantalla Principal -->
+<div class="p-grid">
+    <div class="p-col-12">
+        <!--Card Propietario -->
+        <div class="card">
+            <p-fieldset legend="Datos Persona" [transitionOptions]="'1ms'">
+                <div class="p-fluid p-formgrid p-grid" *ngIf="persona">
+                    <div class="p-field p-col-12 p-md-3">
+                        <label for="nombre">Nombre</label>
+                        <input id="nombre" type="text" pInputText value="{{persona.nombre}}" disabled>
+                    </div>
+                    <div class="p-field p-col-12 p-md-3">
+                        <label for="apellido">Apellido</label>
+                        <input id="apellido" type="text" pInputText value="{{persona.apellido}}" disabled>
+                    </div>
+                    <div class="p-field p-col-12 p-md-3">
+                        <label for="zip">Telefonos</label>
+                        <input id="zip" type="text" pInputText value="{{persona.telefono}}" disabled>
+                    </div>
+                    <div class="p-field p-col-12 p-md-2">
+                        <label for="lote">Lote</label>
+                        <input id="lote" type="text" pInputText value="{{persona.lote}}" disabled>
+                    </div>
+                    <div class="p-field p-col-12 p-md-1">
+                        <label for="accion">Accion</label>
+                                <button (click)="openDialogCrearEmpleado()" 
+                                        pButton 
+                                        type="button" 
+                                        icon="pi pi-plus" 
+                                        class="p-button-rounded p-button-success p-button-plain p-button-text" 
+                                        title="Agregar Empleado">
+                                </button>
+                    </div>
+                </div>
+            </p-fieldset>
+        </div>
+        <!--Card Propietario -->
+        <!--Empleados por Propietario -->
+        <div class="p-grid table-demo" *ngIf="persona">
+            <div class="p-col-12">
+                <p-messages severity="info" *ngIf="persona.empleados.length == 0 ">
+                    <ng-template pTemplate>
+                        <span class="custom-message"> No tiene empleados asociados!</span>
+                    </ng-template>
+                </p-messages>
+                <p-fieldset legend="Listado de Empleados" *ngIf="persona.empleados.length > 0 ">
+                    <div class="card">
+                        <p-table #dt dataKey="id" [value]="persona.empleados"
+                                 styleClass="p-datatable-customers" [rowHover]="true" 
+                                 [rows]="5" [paginator]="true"
+                                 currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width: 3rem">#</th>
+                                    <th>C.I</th>
+                                    <th>Nombres</th>
+                                    <th>Apellidos</th>
+                                    <th>Ocupacion</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-empleado let-rowIndex="rowIndex">
+                                <tr class="p-selectable-row">
+                                    <td >
+                                        <span class="p-column-title">#</span>
+                                        {{ rowIndex + 1 }}
+                                    </td>
+                                    <td>
+                                        <span class="p-column-title">Cédula</span>
+                                        {{empleado.cedula}}
+                                    </td>
+                                    <td>
+                                        <span class="image-text"
+                                            style="margin-left: .5em;vertical-align: middle">{{empleado.nombre}}</span>
+                                    </td>
+                                    <td>
+                                        <span class="image-text"
+                                            style="margin-left: .5em;vertical-align: middle">{{empleado.apellido}}</span>
+                                    </td>
+                                    <td><span class="image-text"
+                                            style="margin-left: .5em;vertical-align: middle">{{empleado.tipoEmpleo.ocupacion}}</span>
+                                    </td>
+                                    <td>
+                                        <button pButton 
+                                                pRipple 
+                                                type="button" 
+                                                icon="pi pi-pencil" 
+                                                class="p-button-rounded p-button-info p-button-text p-button-sm p-mr-2 p-mb-2" 
+                                                (click)="openDialogEditarEmpleado(empleado)"
+                                                title="Editar Empleado">
+                                        </button>
+                                        <button pButton 
+                                                pRipple 
+                                                type="button" 
+                                                icon="pi pi-trash" 
+                                                class="p-button-rounded p-button-danger p-button-text p-button-sm p-mr-2 p-mb-2" 
+                                                (click)="deleteEmpleado(empleado)"
+                                                title="Eliminar Empleado">
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </p-fieldset>
+
+            </div>
+        </div>
+        <!--Empleados por Propietario -->
+    </div>
+</div>
+<!-- Pantalla Principal -->
+
+</p-dialog>
+<!-- Dialog Principal -->
+
+<!-- Dialog Crear - Editar Empleado -->
+<p-dialog header="{{titulo}}" [(visible)]="dialogEmpleado" [modal]="true" [style]="{width: '40vw'}" [draggable]="true"
+    [resizable]="false">
+
+    <form #empleadoForm="ngForm">
+        <div class="p-grid p-fluid">
+            <div class="p-col-12">
+                <div class="card">
+                    <div class="p-grid p-fluid">
+                        <div class="p-col-12 p-md-4">
+                            <div class="p-field">
+                                <label for="name">Cédula</label>
+                                <input type="text" #cedula="ngModel" pInputText placeholder="Cédula" [(ngModel)]="empleado.cedula" name="cedula" required>
+                            </div>
+                            <small *ngIf="cedula.invalid && (cedula.touched || cedula.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
+                        </div>
+                        <div class="p-col-12 p-md-4">
+                            <div class="p-field">
+                                <label for="name">Nombres</label>
+                                <input type="text" #nombre="ngModel" pInputText placeholder="Nombres" [(ngModel)]="empleado.nombre" name="nombre" required>
+                            </div>
+                            <small *ngIf="nombre.invalid && (nombre.touched || nombre.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
+                        </div>
+                        <div class="p-col-12 p-md-4">
+                            <div class="p-field">
+                                <label for="name">Apellidos</label>
+                                <input type="text" #apellido="ngModel" pInputText placeholder="Apellidos" [(ngModel)]="empleado.apellido" name="apellido" required>
+                            </div>
+                            <small *ngIf="apellido.invalid && (apellido.touched || apellido.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
+                        </div>
+                        <div class="p-col-12 p-md-6">
+                            <div class="p-field">
+                                <label for="name">Tipo Empleo</label>
+                                <p-dropdown name="tipoPersonas" [options]="tipoEmpleos" [(ngModel)]="empleado.tipoEmpleo" optionLabel="ocupacion" optionValue="empleado.id" [showClear]="true" placeholder="Tipo de Empleo" required></p-dropdown> 
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-6">
+                            <div class="p-col-12 p-md-4">
+                                <div class="p-field p-text-center">
+                                    <label for="activo">Activo</label>
+                                    <br>
+                                    <p-checkbox name="group1"  id="estado" [(ngModel)]="empleado.estado" [binary]="true" name="estado"></p-checkbox>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-12">
+                            <div class="p-field">
+                                <label for="name">Observaciones</label>
+                                <textarea rows="5" cols="30" placeholder="Observaciones" pInputTextarea [(ngModel)]="empleado.observacion" name="observacion"></textarea>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <p-footer>
+        <button pButton 
+                (click)="dialogEmpleado=false" 
+                class="p-button-danger p-button-sm"
+                type="button" 
+                label="Cancelar" 
+                icon="pi pi-times">
+            </button>
+        <button pButton 
+                icon="pi pi-save" 
+                class="p-button-info p-button-sm" 
+                type="button"
+                (click)="crearEmpleado()" 
+                *ngIf="!empleado.id" 
+                label="Guardar"
+                >
+            </button>
+        <button pButton 
+                icon="pi pi-save" 
+                class="p-button-success p-button-sm" 
+                type="button"
+                (click)="updateEmpleado()"
+                *ngIf="empleado.id" 
+                label="Actualizar">
+            </button>
+    </p-footer>
+
+
+</p-dialog>
+<!-- Dialog Crear - Editar Empleado -->

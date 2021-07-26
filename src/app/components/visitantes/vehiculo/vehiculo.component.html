@@ -1,0 +1,55 @@
+<!-- CREACION DE VEHICULO -->
+<p-dialog header="Registro de Vehiculo" 
+          [(visible)]="componentesService.dialogCrearVehiculo" 
+          [modal]="true" 
+          [style]="{width: '40vw'}"
+          [maximizable]="true" 
+          [draggable]="true" 
+          [resizable]="true">
+
+    <div class="p-grid">
+        <div class="p-col-12">
+            <div class="card">
+                <form action="">
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col-12 p-md-6">
+                            <label for="placa">Placa</label>
+                            <div class="p-inputgroup">
+                                <input type="text" pInputText placeholder="ABC0123" class="p-inputtext-sm" name="placa" [(ngModel)]="vehiculoNuevo.placa">
+                                <button type="button" pButton icon="pi pi-search"></button>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-12 p-md-6">
+                            <label for="antecedentes">Tipo Vehiculo</label>
+                            <input id="antecedentes" type="text" pInputText class="p-inputtext-sm" name="antecedentes" [(ngModel)]="vehiculoNuevo.tipoVehiculo">
+                        </div>
+                        <div class="p-field p-col-6">
+                            <label for="nombre">Marca</label>
+                            <input id="nombre" type="text" pInputText class="p-inputtext-sm" name="nombre" [(ngModel)]="vehiculoNuevo.marca">
+                        </div>
+                        <div class="p-field p-col-6">
+                            <label for="nombre">Color</label>
+                            <input id="nombre" type="text" pInputText class="p-inputtext-sm" name="nombre" [(ngModel)]="vehiculoNuevo.color">
+                        </div>
+                        <div class="p-field p-col-12">
+                            <label for="nombre">Modelo</label>
+                            <input id="nombre" type="text" pInputText class="p-inputtext-sm" name="nombre" [(ngModel)]="vehiculoNuevo.modelo">
+                        </div>
+                        <div class="p-field p-col-12">
+                            <label for="nombre">Detalle</label>
+                            <input id="nombre" type="text" pInputText class="p-inputtext-sm" name="nombre" [(ngModel)]="vehiculoNuevo.detalle">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button (click)="componentesService.dialogCrearVehiculo=false" pButton class="p-button-danger p-button-sm" type="button" label="Cancelar" icon="pi pi-times"></button>
+        <button (click)="crearVehiculo()" pButton icon="pi pi-save" class="p-button-success p-button-sm" type="button" label="Guardar">
+        </button>
+    </ng-template>
+</p-dialog>
+<!-- CREACION DE VEHICULO -->
+

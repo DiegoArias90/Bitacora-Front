@@ -1,0 +1,592 @@
+<div class="p-grid">
+	<div class="p-col-12 p-md-3">
+        <div class="card">
+            <p-panel header="Registro de Visitantes">
+                <div class="card-body">
+                    <form  #bitacoraForm="ngForm">
+                        <div class="p-grid form-group">
+                            <div class="p-col-12 p-md-6">
+                                <div class="p-field-radiobutton p-text-light">
+                                    <p-radioButton name="vehicular" value="VEHICULAR" [(ngModel)]="tipoBitacora" id="vehicular"></p-radioButton>
+                                    <label for="vehicular">Vehicular</label>
+                                </div>
+                            </div>
+                            <div class="p-col-12 p-md-6">
+                                <div class="p-field-radiobutton p-text-light">
+                                    <p-radioButton name="peatonal" value="PEATONAL" [(ngModel)]="tipoBitacora" id="peatonal"></p-radioButton>
+                                    <label for="peatonal">Peatonal</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-fluid">
+                            <div class="p-field p-grid">
+                                <label for="destino" class="p-col-12 p-mb-2 p-md-8 p-mb-md-0">Destino:</label>
+                                <div class="p-col-12 p-md-4">
+                                    <p-autoComplete placeholder="# Lote" 
+                                                    class="p-inputtext-sm p-invalid" 
+                                                    name="residente"
+                                                    #residente="ngModel"
+                                                    [(ngModel)]="bitacora.persona" 
+                                                    [suggestions]="filteredPersonas"
+                                                    (completeMethod)="filterPersona($event)" 
+                                                    field="lote" 
+                                                    [dropdown]="false" 
+                                                    required>
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-grid p-fluid">
+                            <div class="p-col-12 p-md-12">
+                                <label for="firstname1" class="p-text-light">Persona a Ingresar:</label>
+                                <div class="p-inputgroup">
+                                    <p-autoComplete placeholder="# Cédula del visitante" 
+                                                    class="p-inputtext-sm"
+                                                    name="visitante" 
+                                                    [(ngModel)]="bitacora.visitante"
+                                                    [suggestions]="filteredVisitates"
+                                                    (completeMethod)="filterVisitante($event)"
+                                                    field="cedula" 
+                                                    [dropdown]="false"
+                                                    required>
+                                    </p-autoComplete>
+                                    <button (click)='openDialogVisitante()' 
+                                            pButton 
+                                            type="button"
+                                            icon="pi pi-plus" 
+                                            class="p-button-info p-button-sm">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-fluid p-formgrid p-grid">
+                            <div class="p-field p-col-12 p-md-7" *ngIf="tipoBitacoras()">
+                                <label for="firstname6" class="p-text-light">Placa</label>
+                                <div class="p-inputgroup">
+                                    <p-autoComplete placeholder="ABC0123" 
+                                                    class="p-inputtext-sm" 
+                                                    name="vehiculoVisitante"
+                                                    [(ngModel)]="bitacora.vehiculoVisitante" 
+                                                    [suggestions]="filteredVehiculoVisitates"
+                                                    (completeMethod)="filterVehiculo($event)" 
+                                                    field="placa" 
+                                                    [dropdown]="false">
+                                    </p-autoComplete>
+                                    <button pButton="pButton" 
+                                            (click)="openDialogVehiculo()" 
+                                            type="button" icon="pi pi-plus" 
+                                            class="p-button-info p-button-sm">
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-field p-col-12 p-md-5" *ngIf="tipoBitacoras()">
+                                <label for="acompaniante" class="p-text-light">Pasajeros</label>
+                                <!-- <input class="p-inputtext-sm" type="number" min="0" max="4" name="acompaniante" pInputText="pInputText" [(ngModel)]="bitacora.numeroAcompaniante"> -->
+                                <p-dropdown class="p-inputtext-sm" 
+                                                        name="acompaniante" 
+                                                        [options]="acompaniante"
+                                                        optionLabel="valor"  
+                                                        [(ngModel)]="bitacora.acompaniante"  
+                                                        placeholder="No" 
+                                                        [showClear]="true"
+                                                        required>
+                                            </p-dropdown>
+                            </div>
+                        </div>
+                        <div class="p-fluid">
+                            <div class="p-field p-grid">
+                                <div class="p-field p-col-12">
+                                    <label for="motivo" class="p-text-light">Motivo</label>
+                                    <p-dropdown class="p-inputtext-sm" 
+                                                name="motivos" 
+                                                [options]="motivos"
+                                                [(ngModel)]="bitacora.motivo" 
+                                                optionLabel="detalle" 
+                                                optionValue="bitacora.id"
+                                                [showClear]="true" 
+                                                placeholder="Motivo"
+                                                required>
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-fluid">
+                            <div class="p-field p-grid">
+                                <div class="p-field p-col-12 p-md-12">
+                                    <label class="form-control-label p-text-light" for="autorizadoPor">Autorizado por:</label>
+                                            <p-dropdown class="p-inputtext-sm" 
+                                                        name="autorizados" 
+                                                        [options]="autorizados" 
+                                                        [(ngModel)]="selectedAutorizados" 
+                                                        optionLabel="nombre" 
+                                                        placeholder="Autorizado por" 
+                                                        [showClear]="true"
+                                                        required>
+                                            </p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-fluid">
+                            <div class="p-field p-grid">
+                                <div class="p-field p-col-12 p-md-12">
+                                    <label class="form-control-label p-text-light" for="novedad">Novedad</label>
+                                    <input class="p-inputtext-sm" type="text" name="novedad" pInputText="pInputText" [(ngModel)]="bitacora.novedad">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div>
+                        <button pButton 
+                            class="p-button-danger p-button-sm" 
+                            type="button" label="Cancelar"
+                            icon="pi pi-times"
+                            (click)="cleanForm()">
+                    </button>
+                    <button pButton 
+                            icon="pi pi-save" 
+                            (click)="crearBitacora()" 
+                            class="p-button-success p-button-sm" 
+                            type="button"
+                            label="Guardar"
+                            [disabled]="!bitacoraForm.form.valid">
+                    </button>
+                    </div>
+                </div>
+            </p-panel>
+        </div>
+    </div>
+    <div class="p-col-12 p-md-9">
+        <div class="card">
+            <p-panel class="p-text-center" header="Bitácora">
+                <div class="table-responsive">
+                    <table class="table">
+                        <div class="p-grid table-demo">
+                            <div class="p-col-12">
+                                <div class="card">
+                                    <p-table #dt [value]="bitacorasOrdenadas" 
+                                            [(selection)]="selectedbitacoras" dataKey="id"
+                                            styleClass="p-datatable-customers" [rowHover]="true" [rows]="10"
+                                            [paginator]="true" [filterDelay]="0"
+                                            [globalFilterFields]="['visitante.cedula','vehiculoVisitante.placa','persona.lote']"
+                                            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
+                                            [rowsPerPageOptions]="[10,25,50]">
+                                            <ng-template pTemplate="caption">
+                                                <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
+                                                    <span class="p-input-icon-left">
+                                                <i class="pi pi-search"></i>
+                                                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                       placeholder="Busqueda de visitante"/>
+                                            </span>
+                                                </div>
+                                            </ng-template>
+
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width: 3rem">#</th>
+                                                <th>Visitante</th>
+                                                <th>Residente</th>
+                                                <th>Vehiculo</th>
+                                                <th>Destino</th>
+                                                <th>Motivo</th>
+                                                <th>Entrada</th>
+                                                <th style="width: 8rem">Salida</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-bitacora let-rowIndex="rowIndex">
+                                            <tr>
+                                                <td>
+                                                    <span class="p-column-title">#</span>
+                                                    {{ rowIndex + 1 }}
+                                                </td>
+                                                <td>
+                                                    <span class="p-column-title">Visitante</span>
+                                                    {{ bitacora.visitante.nombre }}
+                                                </td>
+                                                <td>
+                                                    <span class="p-column-title">Apellido</span>
+                                                    {{ bitacora.persona.apellido }}
+                                                </td>
+                                                <td>
+                                                    <span class="p-column-title">Tipo de Ingreso</span>
+                                                    {{ bitacora.vehiculoVisitante ? bitacora.vehiculoVisitante.placa : 'Peatonal'}}
+                                                </td>
+                                                <td>
+                                                    <span class="p-column-title">Destino</span>
+                                                    Lote {{ bitacora.persona.lote }}
+                                                </td>
+                                                <td>
+                                                    <span class="p-column-title">Motivo</span>
+                                                    {{ bitacora.motivo.detalle }}
+                                                </td> 
+                                                <td>
+                                                    <span class="p-column-title">Hora de Ingreso</span>
+                                                    {{ bitacora.horaIngreso }}
+                                                </td>
+                                                <td style="text-align: center">
+                                                    <span class="p-column-title">Acciones</span>
+                                                    <button pButton 
+                                                            type="button"
+                                                            class="p-button-warning p-button-sm"
+                                                            icon="pi pi-clock" 
+                                                            title="Salida Visitante"
+                                                            (click)="updateBitacora(bitacora)">
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+
+
+                                            <ng-template pTemplate="emptymessage">
+                                                <tr class="p-text-center">
+                                                    <td colspan="8">
+                                                        <p-messages severity="info">
+                                                            <ng-template pTemplate>
+                                                                <span class="custom-message"> No se ha registrado ningun ingreso!</span>
+                                                            </ng-template>
+                                                        </p-messages>
+                                                    </td>
+                                                </tr>
+                                            </ng-template>
+
+                                    </p-table>
+                                </div>
+                            </div>
+                        </div>
+                    </table>
+                </div>
+            </p-panel>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- <div class="p-grid">
+    <div class="p-col-12 p-md-3">
+        <div class="card">
+            <p-panel header="Registro de Visitantes">
+                <form #bitacoraForm="ngForm" >
+                    <div class="p-grid form-group">
+                        <div class="p-col-12 p-md-6">
+                            <div class="p-field-radiobutton p-text-light">
+                                <p-radioButton name="vehicular" value="VEHICULAR" [(ngModel)]="tipoBitacora" id="vehicular"></p-radioButton>
+                                <label for="vehicular">Vehicular</label>
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-6">
+                            <div class="p-field-radiobutton p-text-light">
+                                <p-radioButton name="peatonal" value="PEATONAL" [(ngModel)]="tipoBitacora" id="peatonal"></p-radioButton>
+                                <label for="peatonal">Peatonal</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-fluid">
+                        <div class="p-field p-grid">
+                            <label for="firstname4" class="p-col-12 p-md-8 p-text-light">Destino:</label>
+                            <div class="p-col-12 p-md-4 p-mt-4">
+                                <p-autoComplete placeholder="# Lote" 
+                                                class="p-inputtext-sm p-invalid" 
+                                                name="residente"
+                                                #residente="ngModel"
+                                                [(ngModel)]="bitacora.persona" 
+                                                [suggestions]="filteredPersonas"
+                                                (completeMethod)="filterPersona($event)" 
+                                                field="lote" 
+                                                [dropdown]="false" 
+                                                required>
+                                </p-autoComplete>
+                                
+                            </div>
+                            <small class="p-invalid p-text-center" *ngIf="residente.invalid && (residente.touched || residente.dirty)">Este campo no puede estar vacio </small>
+                        </div>
+                    </div>
+                    <div class="p-fluid">
+                        <div class="form-group">
+                            <div class="p-fluid">
+                                <div class="p-field">
+                                    <label for="firstname1" class="p-text-light">Persona a Ingresar:</label>
+                                    <div class="p-inputgroup">
+                                        <p-autoComplete placeholder="# Cédula del visitante" 
+                                                        class="p-inputtext-sm"
+                                                        name="visitante" 
+                                                        [(ngModel)]="bitacora.visitante"
+                                                        [suggestions]="filteredVisitates"
+                                                        (completeMethod)="filterVisitante($event)"
+                                                        field="cedula" 
+                                                        [dropdown]="false"
+                                                        required>
+                                        </p-autoComplete>
+                                        <button (click)='openDialogVisitante()' 
+                                                pButton 
+                                                type="button"
+                                                icon="pi pi-plus" 
+                                                class="p-button-info p-button-sm">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col-12 p-md-7" *ngIf="tipoBitacoras()">
+                            <label for="firstname6" class="p-text-light">Placa</label>
+                            <div class="p-inputgroup">
+                                <p-autoComplete placeholder="ABC0123" 
+                                                class="p-inputtext-sm" 
+                                                name="vehiculoVisitante"
+                                                [(ngModel)]="bitacora.vehiculoVisitante" 
+                                                [suggestions]="filteredVehiculoVisitates"
+                                                (completeMethod)="filterVehiculo($event)" 
+                                                field="placa" 
+                                                [dropdown]="false">
+                                </p-autoComplete>
+                                <button pButton="pButton" 
+                                        (click)="openDialogVehiculo()" 
+                                        type="button" icon="pi pi-plus" 
+                                        class="p-button-info p-button-sm">
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-12 p-md-5" *ngIf="tipoBitacoras()">
+                            <label for="acompaniante" class="p-text-light">Pasajeros</label>
+                            <input class="p-inputtext-sm" type="number" max="4" name="acompaniante" pInputText="pInputText" [(ngModel)]="bitacora.numeroAcompaniante">
+                        </div>
+                        <div class="p-field p-col-12">
+                            <label for="motivo" class="p-text-light">Motivo</label>
+                            <p-dropdown class="p-inputtext-sm" 
+                                        name="motivos" 
+                                        [options]="motivos"
+                                        [(ngModel)]="bitacora.motivo" 
+                                        optionLabel="detalle" 
+                                        optionValue="bitacora.id"
+                                        [showClear]="true" 
+                                        placeholder="Motivo"
+                                        required>
+                            </p-dropdown>
+                        </div>
+                        <div class="p-field p-col-12 p-md-12">
+                            <label class="form-control-label p-text-light" for="autorizadoPor">Autorizado por:</label>
+                            <input type="text"  pInputText placeholder="Autorizado por" name="autorizadoPor" required>
+                        </div>
+                        <div class="p-field p-col-12 p-md-12">
+                            <label class="form-control-label p-text-light" for="novedad">Novedades:</label>
+                            <textarea rows="5" cols="30" placeholder="Novedades" pInputTextarea  name="novedad"></textarea>
+                        </div>
+                    </div>
+                </form>
+                <ng-template pTemplate="footer">
+                    <button pButton 
+                            class="p-button-danger p-button-sm" 
+                            type="button" label="Cancelar"
+                            icon="pi pi-times"
+                            (click)="cleanForm()">
+                    </button>
+                    <button pButton 
+                            icon="pi pi-save" 
+                            (click)="crearBitacora()" 
+                            class="p-button-success p-button-sm" 
+                            type="button"
+                            label="Guardar"
+                            [disabled]="!bitacoraForm.form.valid">
+                    </button>
+                </ng-template>
+            </p-panel>
+        </div>
+    </div>
+    <div class="p-col-12 p-md-9">
+        <div class="card">
+            <p-panel class="p-text-center" header="Bitácora">
+                <div class="table-responsive">
+                    <table class="table">
+                        <div class="p-grid table-demo">
+                            <div class="p-col-12">
+                                <div class="card">
+                                    <p-table #dt [value]="bitacorasOrdenadas" 
+                                            [(selection)]="selectedbitacoras" dataKey="id"
+                                            styleClass="p-datatable-customers" [rowHover]="true" [rows]="10"
+                                            [paginator]="true" [filterDelay]="0"
+                                            [globalFilterFields]="['visitante.cedula','vehiculoVisitante.placa','persona.lote']"
+                                            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
+                                            [rowsPerPageOptions]="[10,25,50]">
+                                            <ng-template pTemplate="caption">
+                                                <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
+                                                    <span class="p-input-icon-left">
+                                                <i class="pi pi-search"></i>
+                                                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                       placeholder="Global Search"/>
+                                            </span>
+                                                </div>
+                                            </ng-template>
+
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width: 3rem">#</th>
+                                                <th>Visitante</th>
+                                                <th>Residente</th>
+                                                <th>Vehiculo</th>
+                                                <th>Destino</th>
+                                                <th>Motivo</th>
+                                                <th>Entrada</th>
+                                                <th style="width: 8rem">Salida</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-bitacora let-rowIndex="rowIndex">
+                                            <tr>
+                                                <td>
+                                                    <span class="p-column-title">#</span>
+                                                    {{ rowIndex + 1 }}
+                                                </td>
+                                                <td>
+                                                    <span class="p-column-title">Visitante</span>
+                                                    {{ bitacora.visitante.nombre }}
+                                                </td>
+                                                <td>
+                                                    <span class="p-column-title">Apellido</span>
+                                                    {{ bitacora.persona.apellido }}
+                                                </td>
+                                                <td>
+                                                    <span class="p-column-title">Tipo de Ingreso</span>
+                                                    {{ bitacora.vehiculoVisitante ? bitacora.vehiculoVisitante.placa : 'Peatón'}}
+                                                </td>
+                                                <td>
+                                                    <span class="p-column-title">Destino</span>
+                                                    Lote {{ bitacora.persona.lote }}
+                                                </td>
+                                                <td>
+                                                    <span class="p-column-title">Motivo</span>
+                                                    {{ bitacora.motivo.detalle }}
+                                                </td> 
+                                                <td>
+                                                    <span class="p-column-title">Hora de Ingreso</span>
+                                                    {{ bitacora.horaIngreso }}
+                                                </td>
+                                                <td style="text-align: center">
+                                                    <span class="p-column-title">Acciones</span>
+                                                    <button pButton 
+                                                            type="button"
+                                                            class="p-button-warning p-button-sm"
+                                                            icon="pi pi-clock" 
+                                                            title="Salida Visitante"
+                                                            (click)="updateBitacora(bitacora)">
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+
+
+                                            <ng-template pTemplate="emptymessage">
+                                                <tr class="p-text-center">
+                                                    <td colspan="8">
+                                                        <p-messages severity="info">
+                                                            <ng-template pTemplate>
+                                                                <span class="custom-message"> No se ha registrado ningun ingreso!</span>
+                                                            </ng-template>
+                                                        </p-messages>
+                                                    </td>
+                                                </tr>
+                                            </ng-template>
+
+                                    </p-table>
+                                </div>
+                            </div>
+                        </div>
+                    </table>
+                </div>
+            </p-panel>
+        </div>
+    </div>
+</div> -->
+
+
+<!-- CREACION DE VISITANTE -->
+<p-dialog header="Registro de Visitante" [(visible)]="dialogVisitante" [modal]="true" [style]="{width: '40vw'}"
+    [maximizable]="true" [draggable]="true" [resizable]="true">
+
+    <div class="p-grid">
+        <div class="p-col-12">
+            <div class="card">
+                <form action="">
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col-12 p-md-8">
+                            <label for="cedula">Identificación</label>
+                            <div class="p-inputgroup">
+                                <input type="text" pInputText placeholder="# de cédula" class="p-inputtext-sm" name="cedula" [(ngModel)]="visitanteNuevo.cedula">
+                                <button type="button" pButton icon="pi pi-search"></button>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-12 p-md-4">
+                            <label for="antecedentes">Antecedentes</label>
+                            <input id="antecedentes" type="text" pInputText class="p-inputtext-sm" name="antecedentes" [(ngModel)]="visitanteNuevo.antecedentes">
+                        </div>
+                        <div class="p-field p-col-12">
+                            <label for="nombre">Nombre</label>
+                            <input id="nombre" type="text" pInputText class="p-inputtext-sm" name="nombre" [(ngModel)]="visitanteNuevo.nombre">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button (click)="dialogVisitante=false" pButton class="p-button-danger p-button-sm" type="button" label="Cancelar" icon="pi pi-times">
+        </button>
+        <button (click)="crearVisitante()" pButton icon="pi pi-save" class="p-button-success p-button-sm" type="button" label="Guardar">
+        </button>
+    </ng-template>
+</p-dialog>
+<!-- CREACION DE VISITANTE -->
+
+<!-- CREACION DE VEHICULO -->
+<p-dialog header="Registro de Vehiculo" [(visible)]="dialogVehiculo" [modal]="true" [style]="{width: '50vw'}"
+    [maximizable]="true" [draggable]="true" [resizable]="true">
+
+    <div class="p-grid">
+        <div class="p-col-12">
+            <div class="card">
+                <form action="">
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col-12 p-md-6">
+                            <label for="placa">Placa</label>
+                            <div class="p-inputgroup">
+                                <input type="text" pInputText placeholder="ABC0123" class="p-inputtext-sm" name="placa" [(ngModel)]="vehiculoNuevo.placa">
+                                <button type="button" pButton icon="pi pi-search"></button>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-12 p-md-6">
+                            <label for="tipoVehiculo">Tipo Vehiculo</label>
+                            <input id="tipoVehiculo" type="text" pInputText class="p-inputtext-sm" name="tipoVehiculo" [(ngModel)]="vehiculoNuevo.tipoVehiculo">
+                        </div>
+                        <div class="p-field p-col-6">
+                            <label for="marca">Marca</label>
+                            <input id="marca" type="text" pInputText class="p-inputtext-sm" name="marca" [(ngModel)]="vehiculoNuevo.marca">
+                        </div>
+                        <div class="p-field p-col-6">
+                            <label for="color">Color</label>
+                            <input id="color" type="text" pInputText class="p-inputtext-sm" name="color" [(ngModel)]="vehiculoNuevo.color">
+                        </div>
+                        <div class="p-field p-col-12">
+                            <label for="modelo">Modelo</label>
+                            <input id="modelo" type="text" pInputText class="p-inputtext-sm" name="modelo" [(ngModel)]="vehiculoNuevo.modelo">
+                        </div>
+                        <div class="p-field p-col-12">
+                            <label for="detalle">Detalle</label>
+                            <input id="detalle" type="text" pInputText class="p-inputtext-sm" name="detalle" [(ngModel)]="vehiculoNuevo.detalle">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button (click)="dialogVehiculo=false" pButton class="p-button-danger p-button-sm" type="button" label="Cancelar" icon="pi pi-times"></button>
+        <button (click)="crearVehiculo()" pButton icon="pi pi-save" class="p-button-success p-button-sm" type="button" label="Guardar">
+        </button>
+    </ng-template>
+</p-dialog> 
+<!-- CREACION DE VEHICULO -->
+
+
+  
