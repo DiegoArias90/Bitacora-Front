@@ -1,0 +1,225 @@
+<p-tabView>
+    <p-tabPanel header="Empresas Asociadas">
+        <div class="p-grid">
+            <div class="p-col-12">
+                <div class="p-grid table-demo">
+                    <div class="p-col-12">
+                        <div class="card">
+                            <p-table #dt [value]="empresas" [(selection)]="selectedLugares" dataKey="id"
+                                styleClass="p-datatable-customers" [rowHover]="true" [rows]="10" [paginator]="true"
+                                [filterDelay]="0" [globalFilterFields]="['nombre', 'direccion', 'estado']"
+                                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
+                                [rowsPerPageOptions]="[10,25,50]">
+                                <ng-template pTemplate="caption">
+                                    <div>
+                                        <p-toolbar>
+                                            <div class="p-toolbar-group-left"></div>
+                                            <div class="p-toolbar-group-right">
+                                                <span class="p-input-icon-left">
+                                                    <i class="pi pi-search"></i>
+                                                    <input pInputText type="text"
+                                                        (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                        placeholder="Busqueda General" />
+                                                </span>
+                                                <button pButton 
+                                                        type="button" 
+                                                        label="Nuevo" 
+                                                        icon="pi pi-plus" 
+                                                        iconPos="left"
+                                                        class="p-button-success p-button-sm" 
+                                                        (click)="openDialogCrearLugar()">
+                                                </button>
+                                            </div>
+                                        </p-toolbar>
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width: 3rem">#</th>
+                                        <th>Nombre</th>
+                                        <th>Telefono</th>
+                                        <th>Direccion</th>
+                                        <th style="width: 50px;">Estado</th>
+                                        <th style="text-align: center">Acciones</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-empresa let-rowIndex="rowIndex">
+                                    <tr>
+                                        <td>
+                                            <span class="p-column-title">#</span>
+                                            {{ rowIndex + 1 }}
+                                        </td>
+                                        <td>
+                                            <span class="p-column-title">Empresa</span>
+                                            {{empresa.nombre}}
+                                        </td>
+                                        <td>
+                                            <span class="p-column-title">Telefono</span>
+                                            {{empresa.telefono ? empresa.telefono : 'Sin numero de telefono'}}
+                                        </td>
+                                        <td>
+                                            <span class="p-column-title">Direccion</span>
+                                            {{empresa.direccion}}
+                                        </td>
+                                        <td>
+                                            <span class="p-column-title">Estado</span>
+                                            <span *ngIf="empresa.estado" class="customer-badge status-customer-badge status-qualified">{{empresa.estado ? 'Activo' : 'Inactivo'}}</span>
+                                            <span *ngIf="!empresa.estado"class="customer-badge status-customer-badge status-unqualified">{{empresa.estado ? 'Activo' : 'Inactivo'}}</span>
+                                        </td>
+                                        <td style="text-align: center">
+                                            <button pButton 
+                                                    type="button" 
+                                                    class="p-button-outlined p-button-info p-button-sm"
+                                                    icon="pi pi-pencil" 
+                                                    (click)="openDialogEditarLugar(empresa)"
+                                                    title="Editar Usuario">
+                                            </button>
+                                            <button pButton 
+                                                    type="button" 
+                                                    class="p-button-outlined p-button-danger p-button-sm"
+                                                    icon="pi pi-trash" 
+                                                    (click)="deleteLugar(empresa)"
+                                                    title="Editar Usuario">
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr class="p-text-center">
+                                        <td colspan="8">
+                                            <p-messages severity="info">
+                                                <ng-template pTemplate>
+                                                    <span class="custom-message"> No existe información asociada!</span>
+                                                </ng-template>
+                                            </p-messages>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+        
+                </div>
+            </div>
+        </div>
+    </p-tabPanel>
+</p-tabView>
+
+
+<!-- Dialog Crear - Actualizar -->
+<p-dialog header="{{titulo}}" [(visible)]="dialogLugar" [modal]="true" [style]="{width: '50vw'}" [draggable]="true"
+    [resizable]="false">
+
+    <form #empresaForm="ngForm">
+        <div class="p-grid p-fluid">
+            <div class="p-col-12">
+                <div class="card">
+                    <div class="p-grid p-fluid">
+                        <div class="p-col-12 p-md-6">
+                            <div class="p-field">
+                                <label for="name">Nombre</label>
+                                <input type="text" 
+                                        #nombre="ngModel" 
+                                        pInputText 
+                                        placeholder="Nombre de la empresa" 
+                                        [(ngModel)]="empresa.nombre" 
+                                        name="nombre" 
+                                        required>
+                            </div>
+                            <small *ngIf="nombre.invalid && (nombre.touched || nombre.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
+                        </div>
+                        <div class="p-col-12 p-md-3">
+                            <div class="p-field">
+                                <label for="name">Telefono</label>
+                                <input type="text" 
+                                        #telefono="ngModel" 
+                                        pInputText 
+                                        placeholder="Telefono" 
+                                        [(ngModel)]="empresa.telefono" 
+                                        name="telefono"
+                                        required> 
+                            </div>
+                            <small *ngIf="telefono.invalid && (telefono.touched || telefono.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
+                        </div>
+                        <div class="p-col-12 p-md-3" *ngIf="empresa.id">
+                            <div class="p-field p-text-center">
+                                <label for="activo">Activo</label>
+                                <br>
+                                <p-checkbox name="group1"  id="estado" [(ngModel)]="empresa.estado" [binary]="true" name="estado"></p-checkbox>
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-6">
+                            <div class="p-field">
+                                <label for="name">Direccion</label>
+                                <input type="text" 
+                                        #direccion="ngModel" 
+                                        pInputText 
+                                        placeholder="direccion" 
+                                        [(ngModel)]="empresa.direccion" 
+                                        name="direccion" 
+                                        required>
+                            </div>
+                            <small *ngIf="direccion.invalid && (direccion.touched || direccion.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
+                        </div>
+                        
+                        <div class="p-col-12 p-md-6">
+                            <div class="p-field">
+                                <label for="name">Email</label>
+                                <input type="text" 
+                                        #email="ngModel" 
+                                        pInputText 
+                                        placeholder="Email" 
+                                        [(ngModel)]="empresa.email" 
+                                        name="email">
+                            </div>
+                        
+                        </div>
+                        
+                        <div class="p-col-12 p-md-12">
+                            <div class="p-field">
+                                <label for="name">Observaciones</label>
+                                <textarea rows="5" cols="30" 
+                                            placeholder="Observaciones" 
+                                            pInputTextarea 
+                                            [(ngModel)]="empresa.observacion" 
+                                            name="observacion">
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <p-footer>
+        <button pButton 
+                (click)="dialogLugar=false" 
+                class="p-button-danger p-button-sm"
+                type="button" 
+                label="Cancelar" 
+                icon="pi pi-times">
+            </button>
+        <button pButton 
+                icon="pi pi-save" 
+                class="p-button-info p-button-sm" 
+                type="button"
+                (click)="crearEmpresa()" 
+                *ngIf="!empresa.id" 
+                label="Guardar"
+                [disabled]="!empresaForm.form.valid">
+            </button>
+        <button pButton 
+                icon="pi pi-save" 
+                class="p-button-success p-button-sm" 
+                type="button"
+                (click)='updateUsuario()' 
+                *ngIf="empresa.id" 
+                label="Actualizar"
+                [disabled]="!empresaForm.form.valid">
+            </button>
+    </p-footer>
+
+
+</p-dialog>
+<!-- Dialog Crear - Actualizar -->

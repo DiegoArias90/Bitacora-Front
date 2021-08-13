@@ -5,4 +5,5 @@ export class Visitante {
 	nombre: string;
 	antecedentes: string;
     fechaCreacion: string;
+	tipoIdentificacion: string;
 }

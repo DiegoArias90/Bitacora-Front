@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+
 
 import { Motivo } from '../models/motivo';
 import { environment } from '../../environments/environment';
@@ -8,7 +8,7 @@ import { Observable, throwError } from 'rxjs';
 import { Bitacora } from '../models/bitacora';
 import { catchError } from 'rxjs/operators';
 import { Acompaniantes } from '../models/acompaniantes';
-import { Persona } from '../models/persona';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class BitacoraService {
 
   constructor(
     private http: HttpClient,
-    private router: Router,
+    private authService:AuthService
   ) { }
 
   getMotivo():Observable<Motivo[]>{
@@ -30,6 +30,11 @@ export class BitacoraService {
 
   getBitacoraOrdenada(): Observable<Bitacora[]>{
     return this.http.get<Bitacora[]>( environment.URL_SERVICES + '/bitacoraOrdenada'); 
+  }
+
+  getBitacorasByEmpresa():Observable<Bitacora[]>{
+    let empresaId = parseInt(this.authService.empresaId); 
+    return this.http.get<Bitacora[]>( environment.URL_SERVICES + `/bitacora/byEmpresa/${empresaId}`);
   }
 
   getBitacora(id: number): Observable<Bitacora>{
@@ -46,6 +51,8 @@ export class BitacoraService {
  
 
   crearBitacora(bitacora: Bitacora): Observable<any>{
+    console.log('servicio', bitacora);
+    
     return this.http.post<any>( environment.URL_SERVICES + '/bitacora', bitacora).pipe(
       catchError( e=> {
          if( e.status == 400 ){

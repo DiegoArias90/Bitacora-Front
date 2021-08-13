@@ -1,9 +1,8 @@
 import { TipoPersona } from "./tipo-persona";
-;
 import { Empleado } from "./empleado"
-import { Usuario } from 'src/app/models/usuario';
 import { VehiculoP } from './vehiculoP';
 import { Evento } from './evento';
+import { Empresa } from './empresa';
 
 export class Persona {
     id: number;
@@ -20,8 +19,10 @@ export class Persona {
     fechaActualizacion: Date;
     email: string;
 	tipoPersona: TipoPersona;
-    usuario: Usuario;
+    usuario_id: number;
     vehiculos: VehiculoP[] = [];
     empleados: Empleado[] = [];
     eventos: Evento[] = [];
+    empresa_id: any;
+    empresa: Empresa
 }

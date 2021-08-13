@@ -1,9 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Persona } from 'src/app/models/persona';
 import { PersonaService, ComponentesService } from '../../../../services/services.index';
 import {Table} from 'primeng/table';
 import Swal from 'sweetalert2';
 import { TipoPersona } from 'src/app/models/tipo-persona';
+import { Empresa } from '../../../../models/empresa';
+import { AuthService } from '../../../../auth/auth.service';
 
 
 @Component({
@@ -11,31 +13,50 @@ import { TipoPersona } from 'src/app/models/tipo-persona';
   templateUrl: './personas.component.html',
   styleUrls: ['./personas.component.scss']
 })
-export class PersonasComponent implements OnInit {
+export class PersonasComponent implements OnInit, OnDestroy {
 
   @ViewChild('dt') table: Table;
 
   titulo: string = "";
   personas: Persona[];
+  personasHabilitadas: Persona[];
+  personasDeshabilitadas: Persona[];
+  habilitaBoton: boolean = false;
+
+
   tipoPersonas: TipoPersona[];
+  empresas: Empresa[];
+
+
   selectedDrop: TipoPersona;
   selectedPersonas: Persona[];
   persona: Persona = new Persona();
+  personaTipo: boolean = false;
   personaSeleccionada: Persona;
   dialogPersona: boolean = false;
 
+
   dialogPersonaEmpleado: boolean = false;
-  //private errores: string[];
+  loading: boolean = false;
 
 
   constructor(
     private personaService: PersonaService,
-    private componentesService: ComponentesService 
+    private componentesService: ComponentesService,
   ) { }
+
+
+  ngOnDestroy(): void {
+    this.getTipoPersona();
+    this.getPersonas();
+    this.getEmpresaPersona();
+    this.openDialogCrearPersona();
+  }
 
   ngOnInit(): void {
     this.getPersonas();
     this.getTipoPersona();
+    this.getEmpresaPersona();
   }
 
   openDialog() {
@@ -68,9 +89,22 @@ export class PersonasComponent implements OnInit {
      this.dialogPersona = true;
    }
 
+   personaNatural(event){
+     let tipo = event.value.nombre;
+    if( tipo === 'Juridica') {
+      this.personaTipo = true;
+    } else {
+      this.personaTipo = false
+    }
+    return this.personaTipo;
+   }
+
+
   getPersonas(){
-    this.personaService.getPersonas().subscribe( persona => {
+    this.loading = true;
+    this.personaService.getPersonasByEmpresa().subscribe( persona => {
       this.personas = persona;      
+      this.loading = false;     
     });
   }
 
@@ -80,11 +114,18 @@ export class PersonasComponent implements OnInit {
     });
   }
 
+  getEmpresaPersona(){
+    this.personaService.getEmpresaPersona().subscribe( empresas => {
+      this.empresas = empresas;     
+    });
+  }
+
   getPersona( idPersona:number ){
     this.persona = new Persona();
     if(idPersona){
       this.personaService.getPersona(idPersona).subscribe( persona => {
         if(persona){
+          this.loading = false ;
           this.persona = persona;
         }        
       })
@@ -94,82 +135,94 @@ export class PersonasComponent implements OnInit {
   crearPersona(){
     let nuevaPersona = new Persona();
     nuevaPersona.lote = this.persona.lote.toUpperCase().trim();
-    nuevaPersona.razonSocial = (this.persona.razonSocial != null ? this.persona.razonSocial.toUpperCase().trim() : this.persona.razonSocial);
     nuevaPersona.cedula = this.persona.cedula.toUpperCase().trim();
     nuevaPersona.nombre = this.persona.nombre.toUpperCase().trim();
     nuevaPersona.apellido = this.persona.apellido.toUpperCase().trim();
     nuevaPersona.telefono = this.persona.telefono;
     nuevaPersona.antecedentes = this.persona.antecedentes.toUpperCase().trim();
-    nuevaPersona.observacion = (this.persona.observacion != null ? this.persona.observacion.toUpperCase().trim() : this.persona.observacion);
+    nuevaPersona.observacion = (this.persona.observacion != null ? this.persona.observacion.toUpperCase().trim() : null);
     nuevaPersona.estado = this.persona.estado = true;
-    nuevaPersona.email = this.persona.email;
+    nuevaPersona.email = (this.persona.email != null ? this.persona.email : null);
     nuevaPersona.tipoPersona = this.persona.tipoPersona;
-    console.log(nuevaPersona.tipoPersona);
-    
-    this.personaService.crearPersona(nuevaPersona).subscribe( resp => {
+    nuevaPersona.empresa = this.persona.empresa; 
+    console.log(nuevaPersona);
+     this.personaService.crearPersona(nuevaPersona).subscribe( resp => {
+       console.log(nuevaPersona);
+       
+       Swal.fire({
+         icon: 'success',
+         title: resp.msg,
+         text: `${this.persona.nombre}`,
+         showConfirmButton: true,
+       });
+       this.dialogPersona = false;
+       this.getPersonas();
+     }, err => {
       Swal.fire({
-        icon: 'success',
-        title: resp.msg,
-        text: `${this.persona.nombre}`,
+        icon: 'warning',
+        title: 'Campos incorrectos',
+        text: err.error.errors[0],
         showConfirmButton: true,
       })
-      this.dialogPersona = false;
-      this.getPersonas();
-    });
+     });
   }
 
   updatePersona(){
     let dateActualiza = new Date();
-    try {
-      this.personaService.getPersona(this.persona.id).subscribe( personaAux => {
-        if( personaAux != null ){
-            personaAux.lote =  this.persona.lote = this.persona.lote.toUpperCase().trim();
-            personaAux.razonSocial = (this.persona.razonSocial != null ? this.persona.razonSocial.toUpperCase().trim() : this.persona.razonSocial);
-            personaAux.cedula = this.persona.cedula.toUpperCase().trim();
-            personaAux.nombre = this.persona.nombre.toUpperCase().trim();
-            personaAux.apellido = this.persona.apellido.toUpperCase().trim();
-            personaAux.telefono = this.persona.telefono;
-            personaAux.antecedentes = this.persona.antecedentes.toUpperCase().trim();
-            personaAux.observacion = (this.persona.observacion != null ? this.persona.observacion.toUpperCase().trim() : this.persona.observacion);
-            personaAux.estado = this.persona.estado;
-            personaAux.fechaActualizacion = dateActualiza;
-            personaAux.email = this.persona.email;
-            personaAux.tipoPersona = this.persona.tipoPersona;
-            this.personaService.updatePersona(personaAux).subscribe( persona => {
-              if(persona){
-                this.dialogPersona = false;
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Persona Actualizado con Exito!',
-                  text: `${this.persona.nombre}`,
-                  showConfirmButton: true,
-                });
-                this.getPersonas();
-              } else {
-                Swal.fire({
-                  icon: 'error',
-                  title: 'La persona no se puedo acualizar!',
-                  showConfirmButton: true,
-                });
-              }
-            })
-          
+    this.personaService.getPersona(this.persona.id).subscribe( personaAux => {
+      if( personaAux != null ){
+        personaAux.lote =  this.persona.lote = this.persona.lote.toUpperCase().trim();
+        personaAux.cedula = this.persona.cedula.toUpperCase().trim();
+        personaAux.nombre = this.persona.nombre.toUpperCase().trim();
+        personaAux.telefono = this.persona.telefono;
+        personaAux.antecedentes = this.persona.antecedentes.toUpperCase().trim();
+        personaAux.observacion = (this.persona.observacion != null ? this.persona.observacion.toUpperCase().trim() : this.persona.observacion);
+        personaAux.estado = this.persona.estado;
+        personaAux.fechaActualizacion = dateActualiza;
+        personaAux.email = this.persona.email;
+        personaAux.tipoPersona = this.persona.tipoPersona;
+        if( this.persona.tipoPersona.nombre.indexOf('Juridica')){
+          personaAux.apellido = "";
         } else {
+          personaAux.apellido = this.persona.apellido.toUpperCase().trim()
+        }
+        this.personaService.updatePersona(personaAux).subscribe( persona => {
+          if(persona){
+            this.dialogPersona = false;
+            Swal.fire({
+              icon: 'success',
+              title: 'Persona Actualizado con Exito!',
+              text: `${this.persona.nombre}`,
+              showConfirmButton: true,
+            });
+            this.getPersonas();
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'La persona no se puedo acualizar!',
+              showConfirmButton: true,
+            });
+          }
+        }, err => {
           Swal.fire({
             icon: 'error',
             title: 'La persona no se puedo acualizar!',
             showConfirmButton: true,
           });
-        }
+        });
+      
+    }
+    }, err =>{
+      Swal.fire({
+        icon: 'error',
+        title: 'La persona no se puedo acualizar!',
+        showConfirmButton: true,
       });
-     } catch (error) {
-       Swal.fire({
-         icon: 'error',
-         title: 'El Persona no pudo ser actualizado!',
-         text: `${this.persona.nombre}`,
-         showConfirmButton: true,
-        })
-     }
+    });
+
+
+    
+
   }
 
   deletePersona(persona: Persona){
@@ -186,8 +239,8 @@ export class PersonasComponent implements OnInit {
         this.personaService.deletePersona(persona.id).subscribe( persona => {
           this.getPersonas();
           Swal.fire(
-            'Deleted!',
-            'Your file has been deleted.',
+            'Eliminado!',
+            'La persona ha sido eliminada.',
             'success'
           )
         })  

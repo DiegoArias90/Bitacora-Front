@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 
 import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
+import {DropdownModule} from 'primeng/dropdown';
 
 import { AppLoginComponent } from './login/app.login.component';
 
@@ -22,7 +23,8 @@ import { AppLoginComponent } from './login/app.login.component';
     FormsModule,
     RouterModule,
     ButtonModule,
-    InputTextModule
+    InputTextModule,
+    DropdownModule
   ]
 })
 export class AuthModule { }

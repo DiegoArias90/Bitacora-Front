@@ -9,7 +9,7 @@ export class Evento {
     horaFinalizacion: string;
     detalle: string;
     novedad: string;
-    listaInvitados: string;
+    listaInvitado: string;
     estado: boolean;
     persona: Persona;
     tipoEvento: TipoEvento;

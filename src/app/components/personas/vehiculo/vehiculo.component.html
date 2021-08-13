@@ -118,33 +118,35 @@
             <div class="p-col-12">
                 <div class="card">
                     <div class="p-grid p-fluid">
-                        <div class="p-col-12 p-md-4">
-                            <div class="p-field">
-                                <label for="name">Placa</label>
-                                <input type="text" #placa="ngModel" pInputText placeholder="Cédula" [(ngModel)]="vehiculo.placa" name="placa" required>
+                        <div class="p-fluid p-formgrid p-grid">
+                            <div class="p-field p-col-12 p-md-6">
+                                <label for="placa">Placa</label>
+                                <div class="p-inputgroup">
+                                    <input type="text" pInputText placeholder="ABC0123" class="p-inputtext-sm" name="placa" [(ngModel)]="vehiculo.placa">
+                                    <button type="button" pButton icon="pi pi-search"></button>
+                                </div>
                             </div>
-                            <small *ngIf="placa.invalid && (placa.touched || placa.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
+                            <div class="p-field p-col-12 p-md-6">
+                                <label for="tipoVehiculo">Tipo Vehiculo</label>
+                                <input id="tipoVehiculo" type="text" pInputText class="p-inputtext-sm" name="tipoVehiculo" [(ngModel)]="vehiculo.tipoVehiculo">
+                            </div>
+                            <div class="p-field p-col-6">
+                                <label for="marca">Marca</label>
+                                <input id="marca" type="text" pInputText class="p-inputtext-sm" name="marca" [(ngModel)]="vehiculo.marca">
+                            </div>
+                            <div class="p-field p-col-6">
+                                <label for="color">Color</label>
+                                <input id="color" type="text" pInputText class="p-inputtext-sm" name="color" [(ngModel)]="vehiculo.color">
+                            </div>
+                            <div class="p-field p-col-12">
+                                <label for="modelo">Modelo</label>
+                                <input id="modelo" type="text" pInputText class="p-inputtext-sm" name="modelo" [(ngModel)]="vehiculo.modelo">
+                            </div>
+                            <div class="p-field p-col-12">
+                                <label for="detalle">Detalle</label>
+                                <input id="detalle" type="text" pInputText class="p-inputtext-sm" name="detalle" [(ngModel)]="vehiculo.detalle">
+                            </div>
                         </div>
-                        <div class="p-col-12 p-md-4">
-                            <div class="p-field">
-                                <label for="name">Modelo</label>
-                                <input type="text" #modelo="ngModel" pInputText placeholder="Nombres" [(ngModel)]="vehiculo.modelo" name="modelo" required>
-                            </div>
-                            <small *ngIf="modelo.invalid && (modelo.touched || modelo.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
-                        </div>
-                        <div class="p-col-12 p-md-4">
-                            <div class="p-field">
-                                <label for="name">Apellidos</label>
-                                <input type="text" #apellido="ngModel" pInputText placeholder="Apellidos" [(ngModel)]="vehiculo.color" name="apellido" required>
-                            </div>
-                            <small *ngIf="apellido.invalid && (apellido.touched || apellido.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
-                        </div>
-                        <!-- <div class="p-col-12 p-md-12">
-                            <div class="p-field">
-                                <label for="name">Observaciones</label>
-                                <textarea rows="5" cols="30" placeholder="Observaciones" pInputTextarea [(ngModel)]="vehiculo.observacion" name="observacion"></textarea>
-                            </div>
-                        </div>  -->
                     </div>
                 </div>
             </div>

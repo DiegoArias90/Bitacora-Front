@@ -26,11 +26,13 @@ export class AuthGuard implements CanActivate {
             text: 'Inicie sesión!',
             showConfirmButton: true,
           });
+          this.authService.logout();
           this.router.navigate(['/login']);
           return false;
         }
         return true;
       }
+      this.authService.logout();
       this.router.navigate(['/login']);
       return false;
   }

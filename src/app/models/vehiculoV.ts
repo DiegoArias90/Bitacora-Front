@@ -8,5 +8,4 @@ export class VehiculoV {
 	detalle: string;
 	fechaCreacion: string;
 	anioAuto: string;
-
 }

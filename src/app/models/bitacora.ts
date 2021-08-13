@@ -1,9 +1,9 @@
 import { Motivo } from "./motivo";
 import { Persona } from "./persona";
-import { Usuario } from "./usuario";
 import { VehiculoV } from "./vehiculoV";
 import { Visitante } from "./visitante";
 import { Acompaniantes } from './acompaniantes';
+import { Empresa } from './empresa';
 
 export class Bitacora {
 
@@ -18,8 +18,9 @@ export class Bitacora {
     motivo: Motivo;
     persona: Persona;
 	visitante: Visitante;
-    usuario: Usuario;
     usuario_id: number;
+    empresa_id: any;
+    empresa = Empresa;
     vehiculoVisitante: VehiculoV;
     acompaniates: Acompaniantes[] = [];
 }

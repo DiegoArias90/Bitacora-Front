@@ -8,6 +8,8 @@ import { Persona } from '../models/persona';
 import { TipoPersona } from '../models/tipo-persona';
 
 import { environment } from '../../environments/environment';
+import { AuthService } from '../auth/auth.service';
+import { Empresa } from '../models/empresa';
  
 @Injectable({
   providedIn: 'root'
@@ -17,6 +19,7 @@ export class PersonaService {
   constructor(
     private http: HttpClient,
     private router: Router,
+    private authService:AuthService
   ) { }
  
 
@@ -24,25 +27,27 @@ export class PersonaService {
     return this.http.get<TipoPersona[]>( environment.URL_SERVICES + '/personas/tiposPersonas');
   }
 
-  getPersonas():Observable<Persona[]>{
-    return this.http.get<Persona[]>( environment.URL_SERVICES + '/personas');
+  getEmpresaPersona():Observable<Empresa[]>{
+    return this.http.get<Empresa[]>( environment.URL_SERVICES + '/personas/empresas');
   }
 
-  getPersonasHabilitadas():Observable<Persona[]>{
-    return this.http.get<Persona[]>( environment.URL_SERVICES + '/personas-habilitadas');
-  }
-
-  getPersonasDeshabilitadas():Observable<Persona[]>{
-    return this.http.get<Persona[]>( environment.URL_SERVICES + '/personas-deshabilitadas');
-  }
-
-  buscarPersonasCedula( cedula: string ): Observable<Persona[]>{
-    return this.http.get<Persona[]>( environment.URL_SERVICES + '/personas/filtrar-cedula/' + cedula );
-  }
-
-  buscarPersonasLote( lote: string ): Observable<Persona[]>{
-    return this.http.get<Persona[]>( environment.URL_SERVICES + '/personas/filtrar-lote/' + lote );
+   getPersonas():Observable<Persona[]>{
+     return this.http.get<Persona[]>( environment.URL_SERVICES + '/personas');
    }
+
+   getPersonasByEmpresa():Observable<Persona[]>{
+    let empresaId = parseInt(this.authService.empresaId);
+    return this.http.get<Persona[]>( environment.URL_SERVICES + `/personas/byEmpresa/${empresaId}`);
+  }
+
+  // getPersonasHabilitadas():Observable<Persona[]>{
+  //   return this.http.get<Persona[]>( environment.URL_SERVICES + '/personas-habilitadas');
+  // }
+
+  // getPersonasDeshabilitadas():Observable<Persona[]>{
+  //   return this.http.get<Persona[]>( environment.URL_SERVICES + '/personas-deshabilitadas');
+  // }
+
 
   crearPersona(persona: Persona): Observable<any>{
     return this.http.post<any>( environment.URL_SERVICES + '/personas', persona).pipe(

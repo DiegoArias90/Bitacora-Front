@@ -1,3 +1,4 @@
+export { ReportesService } from './reportes.service';
 //Dialogs
 export { ComponentesService } from '../components/componentes.service';
 
@@ -22,4 +23,7 @@ export { UsuarioService } from './usuario.service';
 export { EventoService } from './evento.service';
 export { EmpleadoService } from './empleado.service';
 export { VehiculoService } from './vehiculo.service';
+export { LugarService } from './lugar.service';
+export { CotejarInfoService } from './cotejar-info.service';
+
  

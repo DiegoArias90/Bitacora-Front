@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Usuario } from '../../../models/usuario';
 import { Role } from '../../../models/role';
-import { UsuarioService } from '../../../services/usuario.service';
+import { UsuarioService } from '../../../services/services.index';
 import Swal from 'sweetalert2';
+import { AuthService } from '../../../auth/auth.service';
+import { Empresa } from '../../../models/empresa';
 
 @Component({
   selector: 'app-usuario',
@@ -13,22 +15,34 @@ export class UsuarioComponent implements OnInit {
 
   selectedUsuarios: Usuario[];
   selectedDrop: Role;
+  selectedDropEmpresa: Empresa;
   usuarios: Usuario[];
+  usuariosHabilitados: Usuario[];
+  usuariosDeshabilitados: Usuario[];
   usuario: Usuario = new Usuario();
+  usuarioPass: Usuario = new Usuario();
+
+  //Multiselects
   roles: Role[];
-  titulo: string = ""; 
-
   perfiles: any[];
+  empresas: Empresa[];
+  lugares: any[];
+  
 
+  titulo: string = ""; 
   dialogUsuario: boolean = false;
+  dialogCambioPassword: boolean = false;
 
   constructor(
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    public authService: AuthService
   ) { }
 
   ngOnInit(): void {
     this.getUsuarios();
     this.getRoles();
+
+    this.getEmpresas();
   }
 
   openDialogCrearUsuario(): void {
@@ -43,6 +57,12 @@ export class UsuarioComponent implements OnInit {
      this.dialogUsuario = true;
    }
 
+   openDialogActualizarPassword( usuario: Usuario ): void {
+    this.titulo = 'Actualizar Contaseña de Usuario';
+     this.getUsuario(usuario.id);
+     this.dialogCambioPassword = true;
+   }
+
    getRoles(){
     this.usuarioService.getRoles().subscribe( roles => {
       this.roles = roles;
@@ -50,9 +70,16 @@ export class UsuarioComponent implements OnInit {
     });
   }
 
+  getEmpresas(){
+    this.usuarioService.getEmpresas().subscribe( empresas => {
+      this.empresas = empresas;
+      this.lugares = empresas;
+    });
+  }
+
   getUsuarios(){
     this.usuarioService.getUsuarios().subscribe( usuarios => {
-      this.usuarios = usuarios;          
+      this.usuarios = usuarios;               
     });
   }
 
@@ -76,7 +103,9 @@ export class UsuarioComponent implements OnInit {
     nuevaUsuario.telefono = (this.usuario.telefono != null ? this.usuario.telefono.toUpperCase().trim() : this.usuario.telefono);
     nuevaUsuario.observacion = (this.usuario.observacion != null ? this.usuario.observacion.toUpperCase().trim() : this.usuario.observacion);
     nuevaUsuario.estado = this.usuario.estado = false;
-    nuevaUsuario.roles = this.usuario.roles;   
+    nuevaUsuario.password = this.usuario.password;
+    nuevaUsuario.roles = this.usuario.roles;  
+    nuevaUsuario.empresas = this.usuario.empresas;  
     this.usuarioService.crearUsuario(nuevaUsuario).subscribe( resp => {
       Swal.fire({
         icon: 'success',
@@ -86,10 +115,13 @@ export class UsuarioComponent implements OnInit {
       })
       this.dialogUsuario = false;
       this.getUsuarios();
+    }, err => {
+      console.log(err);
+      
     });
   }
 
-  updatePersona(){
+  updateUsuario(){
     try {
       this.usuarioService.getUsuario(this.usuario.id).subscribe( usuarioAux => {
         if( usuarioAux != null ){
@@ -101,16 +133,18 @@ export class UsuarioComponent implements OnInit {
             usuarioAux.observacion = (this.usuario.observacion != null ? this.usuario.observacion.toUpperCase().trim() : this.usuario.observacion);
             usuarioAux.estado = this.usuario.estado;
             usuarioAux.roles = this.usuario.roles;
+            usuarioAux.empresas = this.usuario.empresas;
             this.usuarioService.updateUsuario(usuarioAux).subscribe( usuario => {
               if(usuario){
                 this.dialogUsuario = false;
+                this.getUsuarios();
+
                 Swal.fire({
                   icon: 'success',
                   title: 'Usuario Actualizado con Exito!',
                   text: `${this.usuario.nombre}`,
                   showConfirmButton: true,
                 });
-                this.getUsuarios();
               } else {
                 Swal.fire({
                   icon: 'error',
@@ -138,7 +172,54 @@ export class UsuarioComponent implements OnInit {
      }
   }
 
+  cambiarRole( usuario: Usuario ){
+    this.usuarioService.updateUsuario(usuario).subscribe( usuario => {
+      console.log(usuario);
+    })
+    
+  }
+
+  cambiarPass( usuario: Usuario ){
+    this.usuarioService.getUsuario(this.usuario.id).subscribe( usuarioAux => {
+      if( usuarioAux != null ){
+          usuarioAux.password = this.usuarioPass.password;
+          console.log(usuarioAux);
+          this.usuarioService.updateUsuario(usuarioAux).subscribe( usuario => {
+              this.dialogCambioPassword = false;
+              Swal.fire({
+                icon: 'success',
+                title: 'Contraseña actualizada con Exito!',
+                text: `${this.usuario.nombre}`,
+                showConfirmButton: true,
+              });
+           });
+      }
+    });
+    
+  }
+
+  cambiarEmpresa( usuario: Usuario ){
+    this.usuarioService.updateUsuario(usuario).subscribe( usuario => {
+      this.dialogUsuario = false;
+      Swal.fire({
+        icon: 'success',
+        title: 'Usuario Actualizado con Exito!',
+        text: `${this.usuario.nombre}`,
+        showConfirmButton: true,
+      });
+    })
+    
+  }
+
   deleteUsuario(usuario: Usuario){
+    if( usuario.id === this.authService.usuario.id ){
+      return Swal.fire({
+        icon: 'error',
+        title: 'No se puede borrar a si mismo',
+        showConfirmButton: true,
+      });
+    }
+    
     Swal.fire({
       title: 'Estas seguro?',
       text: "Se eliminara este usuario!",

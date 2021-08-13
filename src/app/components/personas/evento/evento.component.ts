@@ -5,6 +5,10 @@ import { Evento } from '../../../models/evento';
 import { ComponentesService, EventoService, PersonaService } from 'src/app/services/services.index';
 import Swal from 'sweetalert2';
 import * as moment from 'moment';
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
+import { AuthInterceptor } from '../../../interceptor/auth.interceptor';
+import { environment } from '../../../../environments/environment.prod';
 
 @Component({
   selector: 'app-evento',
@@ -14,20 +18,25 @@ import * as moment from 'moment';
 export class EventoComponent implements OnInit {
 
   @Input() persona: Persona;
+  
   tipoEventos: TipoEvento[];
   evento: Evento = new Evento();
 
   titulo: string = '';
   dialogEvento: boolean = false;
+  dialogDescargarLista: boolean = false;
   minDate: Date;
   eventos: Evento[];
   maxDate: Date;
-  private archivoSeleccionado: File;
+  public archivoSeleccionado: File;
+
+  
 
   constructor(
     private eventoService: EventoService,
     private personaService: PersonaService,
     public componentesService: ComponentesService,
+    private authInterceptor: AuthInterceptor
   ) { }
 
   ngOnInit(): void {
@@ -76,6 +85,12 @@ export class EventoComponent implements OnInit {
      this.dialogEvento = true;
    }
 
+   openDialogDescargarLista( evento: Evento ): void {
+    this.titulo = 'Descargar listado de invitados';
+     this.getEvento(evento.id);
+     this.dialogDescargarLista = true;
+   }
+
   crearEvento(){  
      let nuevoEvento = new Evento();
      nuevoEvento.responsable = (this.evento.responsable != null ? this.evento.responsable.toUpperCase().trim() : "");
@@ -83,18 +98,15 @@ export class EventoComponent implements OnInit {
      nuevoEvento.fechaFinalizacion = new Date(this.evento.fechaFinalizacion);
      nuevoEvento.horaInicio = moment(this.evento.horaInicio).format('h:mm:ss');
      nuevoEvento.horaFinalizacion = moment(this.evento.horaFinalizacion).format('h:mm:ss');
-     nuevoEvento.estado = this.evento.estado;
+     nuevoEvento.estado = false;
      nuevoEvento.detalle = (this.evento.detalle != null ? this.evento.detalle.toUpperCase().trim() : "");
      nuevoEvento.novedad = (this.evento.novedad != null ? this.evento.novedad.toUpperCase().trim() : "");
      nuevoEvento.persona = this.persona;
      nuevoEvento.tipoEvento = this.evento.tipoEvento;  
-     nuevoEvento.listaInvitados = this.evento.listaInvitados; 
+     nuevoEvento.listaInvitado = this.evento.listaInvitado != null ? this.evento.listaInvitado: null;
      console.log(nuevoEvento);
      
      this.eventoService.crearEvento(nuevoEvento).subscribe( resp => {
-      if(nuevoEvento.listaInvitados){
-        this.subirArchivo();
-       }
       this.getPersona();
        this.dialogEvento = false;
        Swal.fire({
@@ -103,6 +115,9 @@ export class EventoComponent implements OnInit {
          text: `${this.evento.tipoEvento.nombreEvento}`,
          showConfirmButton: true,
        });
+     }, err => {
+       console.log(err);
+       
      });
   }
 
@@ -183,16 +198,81 @@ export class EventoComponent implements OnInit {
 
   seleccionarArchivo(event){
     this.archivoSeleccionado = event.target.files[0];
-    console.log(this.archivoSeleccionado);
+    if( this.archivoSeleccionado.type.indexOf('application/vnd.openxmlformats-officedocument') < 0  ){
+      console.log(this.archivoSeleccionado.type);
+      
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al seleccionar archivo!',
+        text: 'El archivo debe ser Excel',
+        showConfirmButton: true,
+       })
+      this.archivoSeleccionado = null;
+    } 
     
   }
 
   subirArchivo(){
-    this.eventoService.UploadListaInvitados(this.archivoSeleccionado, this.evento.id).subscribe( evento => {
-      this.evento = evento;
-      console.log(this.evento);
+    if(!this.archivoSeleccionado){
+      Swal.fire({
+        icon: 'error',
+        title: 'Error Upload!',
+        text: 'Debe seleccionar un archivo',
+        showConfirmButton: true,
+       })
+    }
+    else {
+      console.log('x', this.archivoSeleccionado);
       
-    })
+      this.eventoService.UploadListaInvitados(this.archivoSeleccionado, this.evento.id).subscribe( evento => {
+        this.evento = evento;
+        console.log(this.evento);
+        
+      }, catchError(e=> {
+        if( e.status == 400 ){
+          return throwError(e);
+        }
+       return throwError(e);
+     }))
+    }
+  }
+
+  // downloadArchivo(){
+  //   this.eventoService.getEvento(this.evento.id).subscribe( eventoAux => {
+  //     if(eventoAux != null ){
+  //       // eventoAux //= this.evento.listaInvitados 
+  //       // console.log('descargado', eventoAux);
+  //        this.eventoService.downloadListaEvento(eventoAux.listaInvitado).subscribe( listado => {
+  //          console.log('descargado', listado);
+          
+  //        })
+  //     }
+  //   })
+  // }
+
+  descargarExcel(evento: Evento){
+    console.log(evento);
+    
+    const filename = evento.listaInvitado;
+    console.log(filename);
+    
+     this.eventoService.downloadListaEvento(filename).subscribe( resp => {
+       this.manageExcelFile( resp, filename );
+     });
+  }
+
+  manageExcelFile( resp: any, filename: string ){
+    const dataType = resp.type;
+    const binaryData = [];
+
+    binaryData.push(resp);
+
+    const filePath = window.URL.createObjectURL( new Blob( binaryData, { type: dataType } ) )
+    const downloadPah = document.createElement('a');
+    downloadPah.href = filePath;
+    downloadPah.setAttribute('download', filename);
+    document.body.appendChild(downloadPah);
+    downloadPah.click();
   }
 
 }

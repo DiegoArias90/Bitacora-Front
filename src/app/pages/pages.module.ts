@@ -31,6 +31,7 @@ import {CalendarModule} from 'primeng/calendar';
 import {FieldsetModule} from 'primeng/fieldset';
 import {ToggleButtonModule} from 'primeng/togglebutton';
 import {FileUploadModule} from 'primeng/fileupload';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
 
 //Modulos Creados
 import { SharedModule } from '../shared/shared.module';
@@ -58,6 +59,7 @@ import { EventosComponent } from './administrador/personas/eventos/eventos.compo
 
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { VehiculoComponent } from '../components/personas/vehiculo/vehiculo.component';
+import { LugaresComponent } from './administrador/lugares/lugares.component';
 
 
 
@@ -74,7 +76,8 @@ import { VehiculoComponent } from '../components/personas/vehiculo/vehiculo.comp
     EventosComponent,
     DashboardComponent,
     EmpleadoComponent,
-    EventoComponent
+    EventoComponent,
+    LugaresComponent
   ],
   exports: [
     AppMainComponent,
@@ -116,7 +119,8 @@ import { VehiculoComponent } from '../components/personas/vehiculo/vehiculo.comp
     CalendarModule,
     FieldsetModule,
     ToggleButtonModule,
-    FileUploadModule
+    FileUploadModule,
+    ProgressSpinnerModule
   ],
   providers: [
     MenuService,

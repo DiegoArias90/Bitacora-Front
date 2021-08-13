@@ -92,8 +92,16 @@
                                                 icon="pi pi-pencil" 
                                                 class="p-button-rounded p-button-info p-button-text p-button-sm p-mr-2 p-mb-2" 
                                                 (click)="openDialogEditarEvento(evento)"
-                                                
                                                 title="Editar Evento">
+                                        </button>
+                                        <button pButton 
+                                                pRipple 
+                                                type="button" 
+                                                icon="pi pi-download" 
+                                                class="p-button-rounded p-button-info p-button-text p-button-sm p-mr-2 p-mb-2" 
+                                                (click)="descargarExcel(evento)"
+                                                title="descargar"
+                                                *ngIf="evento.listaInvitado">
                                         </button>
                                         <button pButton 
                                                 pRipple 
@@ -119,7 +127,7 @@
 <!-- Dialog Principal -->
 
 <!-- Dialog Crear - Actualizar -->
-<p-dialog header="{{titulo}}" [(visible)]="dialogEvento" [modal]="true" [style]="{width: '750px'}" [draggable]="true"
+<p-dialog header="{{titulo}}" [(visible)]="dialogEvento" [modal]="true" [style]="{width: '50vw'}" [draggable]="true"
     [resizable]="false">
 
     <form #eventoForm="ngForm">
@@ -137,10 +145,18 @@
                         <div class="p-col-12 p-md-4">
                             <div class="p-field">
                                 <label for="name">Tipo Evento</label>
-                                <p-dropdown name="tipoPersonas" [options]="tipoEventos" [(ngModel)]="evento.tipoEvento" optionLabel="nombreEvento" optionValue="evento.id" [showClear]="true" placeholder="Tipo de Empleo"></p-dropdown> 
+                                <p-dropdown name="tipoEventos" 
+                                            [options]="tipoEventos" 
+                                            [(ngModel)]="evento.tipoEvento" 
+                                            optionLabel="nombreEvento" 
+                                            optionValue="evento.id" 
+                                            [showClear]="true" 
+                                            placeholder="Tipo de Empleo"
+                                            required>
+                                </p-dropdown> 
                             </div>
                         </div>
-                        <div class="p-col-12 p-md-2" *ngIf="!evento.id">
+                        <div class="p-col-12 p-md-4" *ngIf="evento.id">
                             <div class="p-col-12 p-md-4">
                                 <div class="p-field p-text-center">
                                     <label for="activo">Finalizar</label>
@@ -149,11 +165,23 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="p-col-12 p-md-2">
+                        <div class="p-col-12 p-md-6" *ngIf="evento.id">
                             <div class="p-field">
                                 <label for="name">Lista de Invitados</label>
                                 <input class="p-inputtext-sm" type="file" (change)="seleccionarArchivo($event)" name="listaInvitados" [(ngModel)]="evento.listaInvitados" pInputText>
-                                <!-- <p-fileUpload (change)="seleccionarArchivo($event)" mode="basic" accept="image/*" [maxFileSize]="1000000" class="p-mr-2 p-mb-2 p-d-inline-block"></p-fileUpload> -->
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-6" *ngIf="evento.id">
+                            <div class="p-field">
+                                <label for="name">Subir lista de invitados</label>
+                                <br>
+                                <button pButton 
+                                        (click)="subirArchivo()" 
+                                        class="p-button-success p-button-sm"
+                                        type="button" 
+                                        icon="pi pi-upload"
+                                        [disabled]="!archivoSeleccionado">
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -167,7 +195,8 @@
                                             [(ngModel)]="evento.fechaCreacion"
                                             [minDate]="minDate"
                                             dateFormat="yy-mm-dd"
-                                            (ngModelChange)="cambiarFechaEvento()">
+                                            (ngModelChange)="cambiarFechaEvento()"
+                                            required>
                                 </p-calendar>
                             </div>
                         </div>
@@ -178,7 +207,8 @@
                                             name="fechaFinalizacion" 
                                             inputId="fechaFinalizacion" 
                                             [(ngModel)]="evento.fechaFinalizacion"
-                                            dateFormat="yy-mm-dd">
+                                            dateFormat="yy-mm-dd"
+                                            required>
                                 </p-calendar>
                             </div>
                         </div>
@@ -187,10 +217,15 @@
                         <div class="p-col-12 p-md-6">
                             <label for="horaInicio">Hora Inicio</label>
                             <div class="p-field">
-                                {{evento.horaInicio}}
+                               <input class="p-inputtext-sm" pInputText type="text" value="{{evento.horaInicio}}" disabled> 
                             </div>
                         </div>
-                        <div class="p-col-12 p-md-6"></div>
+                        <div class="p-col-12 p-md-6">
+                            <label for="horaInicio">Hora Finalizacion</label>
+                            <div class="p-field">
+                                <input class="p-inputtext-sm" pInputText type="text" value="{{evento.horaFinalizacion}}" disabled> 
+                            </div>
+                        </div>
                     </div>
                     <div class="p-grid p-formgrid" *ngIf="!evento.id">
                         <div class="p-col-12 p-md-6">
@@ -206,7 +241,7 @@
                                 </p-calendar>
                             </div>
                         </div>
-                        <div class="p-col-12 p-md-6">
+                        <div class="p-col-12 p-md-6" *ngIf="!evento.id">
                             <div class="p-field">
                                 <label for="horaFinalizacion">Hora Fin</label>
                                 <p-calendar class="p-inputtext-sm"
@@ -254,13 +289,13 @@
                 (click)="crearEvento()" 
                 *ngIf="!evento.id" 
                 label="Guardar"
-                >
+                [disabled]=!eventoForm.valid>
             </button>
         <button pButton 
                 icon="pi pi-save" 
                 class="p-button-success p-button-sm" 
                 type="button"
-                (click)="subirArchivo()"
+                (click)="updateEvento()"
                 *ngIf="evento.id" 
                 label="Actualizar">
             </button>
@@ -269,3 +304,26 @@
 
 </p-dialog>
 <!-- Dialog Crear - Actualizar -->
+
+<!-- <p-dialog header="{{titulo}}" [(visible)]="dialogDescargarLista" [modal]="true" [style]="{width: '50vw'}" [draggable]="true"
+    [resizable]="false">
+
+    <p-footer>
+        <button pButton 
+                (click)="dialogDescargarLista=false" 
+                class="p-button-danger p-button-sm"
+                type="button" 
+                label="Cancelar" 
+                icon="pi pi-times">
+            </button>
+        <button pButton 
+                icon="pi pi-save" 
+                class="p-button-success p-button-sm" 
+                type="button"
+                (click)="downloadArchivo()"
+                *ngIf="evento.id" 
+                label="Descargar">
+            </button>
+    </p-footer>
+
+</p-dialog> -->

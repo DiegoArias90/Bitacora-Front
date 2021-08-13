@@ -77,6 +77,17 @@ export class EventoService {
     deleteEvento(id: number): Observable<Evento>{
       return this.http.delete<Evento>( environment.URL_SERVICES + '/eventos/' + id).pipe(
         catchError( e=> {
+          if( e.status == 400 ){
+            return throwError(e);
+          }
+          return throwError(e);
+        })
+      );
+    }
+
+    downloadListaEvento(nombreArchivo: string){
+      return this.http.get(environment.URL_SERVICES +'/uploads/archivo/'+ nombreArchivo, {responseType: 'blob'}).pipe(
+        catchError( e=> {
           return throwError(e);
         })
       );

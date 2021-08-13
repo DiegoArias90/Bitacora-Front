@@ -19,7 +19,10 @@ import {
   ComponentesService,
   EmpleadoService,
   EventoService,
-  VehiculoService
+  VehiculoService,
+  LugarService,
+  CotejarInfoService,
+  ReportesService
 } from './services.index';
 
 @NgModule({
@@ -45,7 +48,10 @@ import {
     ComponentesService,
     EmpleadoService,
     EventoService,
-    VehiculoService
+    VehiculoService,
+    LugarService,
+    CotejarInfoService,
+    ReportesService
   ],
 })
 export class ServiceModule {}

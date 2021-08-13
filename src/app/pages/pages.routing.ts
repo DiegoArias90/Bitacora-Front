@@ -12,7 +12,8 @@ import { UsuarioComponent } from './administrador/usuario/usuario.component';
 import { ReportesComponent } from './administrador/reportes/reportes.component';
 import { EventosComponent } from './administrador/personas/eventos/eventos.component';
 import { EmpleadosComponent } from './administrador/personas/empleados/empleados.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { LugaresComponent } from './administrador/lugares/lugares.component';
+import { RoleGuard } from '../guards/role.guard';
 
 
 
@@ -21,10 +22,10 @@ const routes: Routes = [
         path: 'dashboard', 
         component: AppMainComponent,
         children: [
-            // { path: 'main', component: DashboardComponent, canActivate: [ AuthGuard ] },
-             { path: 'residentes', component: PersonasComponent, canActivate: [ AuthGuard ] },
-             { path: 'usuarios', component: UsuarioComponent, canActivate: [ AuthGuard ] },
-             { path: 'reportes', component: ReportesComponent, canActivate: [ AuthGuard ] },
+             { path: 'lugares', component: LugaresComponent, canActivate: [ AuthGuard, RoleGuard ] },
+             { path: 'residentes', component: PersonasComponent, canActivate: [ AuthGuard, RoleGuard ] },
+             { path: 'usuarios', component: UsuarioComponent, canActivate: [ AuthGuard, RoleGuard ] },
+             { path: 'reportes', component: ReportesComponent, canActivate: [ AuthGuard, RoleGuard ] },
              
              { path: 'eventos', component: EventosComponent, canActivate: [ AuthGuard ] },
              { path: 'empleados', component: EmpleadosComponent, canActivate: [ AuthGuard ] },

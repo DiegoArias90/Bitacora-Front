@@ -1,108 +1,149 @@
-<!-- Pantalla Principal -->
-<div class="p-grid">
-    <div class="p-col-12">
-        <div class="p-grid table-demo">
+<p-tabView>
+    <p-tabPanel header="Lista de Usuarios">
+        <div class="p-grid">
             <div class="p-col-12">
-                <div class="card">
-                    <p-table #dt [value]="usuarios" [(selection)]="selectedUsuarios" dataKey="id"
-                        styleClass="p-datatable-customers" [rowHover]="true" [rows]="10" [paginator]="true"
-                        [filterDelay]="0" [globalFilterFields]="['cedula','nombre','apellido','lote']"
-                        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
-                        [rowsPerPageOptions]="[10,25,50]">
-                        <ng-template pTemplate="caption">
-                            <div>
-                                <p-toolbar>
-                                    <div class="p-toolbar-group-left">
-                                        <h5>Listado de Usuarios</h5>
+                <div class="p-grid table-demo">
+                    <div class="p-col-12">
+                        <div class="card">
+                            <p-table #dt [value]="usuarios" [(selection)]="selectedUsuarios" dataKey="id"
+                                styleClass="p-datatable-customers" [rowHover]="true" [rows]="10" [paginator]="true"
+                                [filterDelay]="0" [globalFilterFields]="['cedula','nombre','apellido','lote']"
+                                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
+                                [rowsPerPageOptions]="[10,25,50]">
+                                <ng-template pTemplate="caption">
+                                    <div>
+                                        <p-toolbar>
+                                            <div class="p-toolbar-group-left"></div>
+                                            <div class="p-toolbar-group-right">
+                                                <span class="p-input-icon-left">
+                                                    <i class="pi pi-search"></i>
+                                                    <input pInputText type="text"
+                                                        (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                        placeholder="Busqueda General" />
+                                                </span>
+                                                <button pButton 
+                                                        type="button" 
+                                                        label="Nuevo" 
+                                                        icon="pi pi-plus" 
+                                                        iconPos="left"
+                                                        class="p-button-success p-button-sm" 
+                                                        (click)="openDialogCrearUsuario()">
+                                                </button>
+                                            </div>
+                                        </p-toolbar>
                                     </div>
-                                    <div class="p-toolbar-group-right">
-                                        <span class="p-input-icon-left">
-                                            <i class="pi pi-search"></i>
-                                            <input pInputText type="text"
-                                                (input)="dt.filterGlobal($event.target.value, 'contains')"
-                                                placeholder="Busqueda General" />
-                                        </span>
-                                        <button pButton 
-                                                type="button" 
-                                                label="Nuevo" 
-                                                icon="pi pi-plus" 
-                                                iconPos="left"
-                                                class="p-button-success p-button-sm" 
-                                                (click)="openDialogCrearUsuario()">
-                                        </button>
-                                    </div>
-                                </p-toolbar>
-                            </div>
-                        </ng-template>
-                        <ng-template pTemplate="header">
-                            <tr>
-                                <th style="width: 3rem">#</th>
-                                <th>Identificación</th>
-                                <th>Nombre</th>
-                                <th>Apellido</th>
-                                <th>Username</th>
-                                <th>Role</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="body" let-usuario let-rowIndex="rowIndex">
-                            <tr class="p-selectable-row">
-                                <td>
-                                    <span class="p-column-title">#</span>
-                                    {{ rowIndex + 1 }}
-                                </td>
-                                <td>
-                                    <span class="p-column-title">Cédula</span>
-                                    {{usuario.cedula}}
-                                </td>
-                                <td>
-                                    <span class="p-column-title">Nombre</span>
-                                    {{usuario.apellido}}
-                                </td>
-                                <td>
-                                    <span class="p-column-title">Apellido</span>
-                                    {{usuario.nombre}}</td>
-                                <td>
-                                    <span class="p-column-title">Username</span>
-                                    {{usuario.username}}
-                                <td>
-                                    <span class="p-column-title">Role</span>
-                                    {{usuario.roles[0].nombre}}
-                                </td>
-                                <td style="text-align: center">
-                                    <button pButton 
-                                            type="button" 
-                                            class="p-button-outlined p-button-info p-button-sm"
-                                            icon="pi pi-pencil" 
-                                            (click)="openDialogEditarUsuario(usuario)"
-                                            title="Editar Usuario">
-                                    </button>
-                                    <button pButton 
-                                            type="button" 
-                                            class="p-button-danger p-button-sm" 
-                                            icon="pi pi-trash"
-                                            (click)="deleteUsuario(usuario)" 
-                                            title="Eliminar Usuario">
-                                    </button>
-                                </td>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="emptymessage">
-                            <tr>
-                                <td colspan="8">No existe informacion asociada!</td>
-                            </tr>
-                        </ng-template>
-                    </p-table>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width: 3rem">#</th>
+                                        <th style="width: 150px;">Identificación</th>
+                                        <th>Nombre</th>
+                                        <th>Lugar Asignado</th>
+                                        <th>Role</th>
+                                        <th style="width: 50px;">Estado</th>
+                                        <th style="text-align: center">Acciones</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-usuario let-rowIndex="rowIndex">
+                                    <tr class="p-selectable-row">
+                                        <td>
+                                            <span class="p-column-title">#</span>
+                                            {{ rowIndex + 1 }}
+                                        </td>
+                                        <td>
+                                            <span class="p-column-title">Cédula</span>
+                                            {{usuario.cedula}}
+                                        </td>
+                                        <td>
+                                            <span class="p-column-title">Nombre</span>
+                                            {{usuario.nombre}} {{usuario.apellido}}
+                                        </td>
+                                        <td>
+                                            <span class="p-column-title">Lugar asignado</span>
+                                            <p-multiSelect name="lugares" [options]="lugares" [(ngModel)]="usuario.empresas" (ngModelChange)="cambiarEmpresa(usuario)" defaultLabel="Seleccione una empresa" optionLabel="nombre" class="multiselect-custom">
+                                                <ng-template let-value pTemplate="selectedItems">
+                                                    <div class="country-item country-item-value" *ngFor="let option of usuario.empresas">
+                                                        <div>{{option.nombre}}</div>
+                                                    </div>
+                                                    <div *ngIf="!usuario.empresas || usuario.empresas.length === 0" class="country-placeholder">
+                                                        Seleccione una empresa
+                                                    </div>
+                                                </ng-template>
+                                                <div *ngFor="let lugar of lugares">
+                                                    <div>{{lugar}}</div>
+                                                </div>
+                                            </p-multiSelect>
+                                        </td>    
+                                        <td>
+                                            <span class="p-column-title">Role</span>
+                                            <p-dropdown name="roles" 
+                                                        [options]="roles" 
+                                                        [(ngModel)]="usuario.roles[0]" 
+                                                        optionLabel="nombre" 
+                                                        optionValue="usuario.id" 
+                                                        [showClear]="true" 
+                                                        placeholder="Role"
+                                                        (ngModelChange)="cambiarRole(usuario)">
+                                            </p-dropdown>
+                                        </td>
+                                        <td>
+                                            <span class="p-column-title">Estado</span>
+                                            <span *ngIf="usuario.estado" class="customer-badge status-customer-badge status-qualified">{{usuario.estado ? 'Activo': 'Inactivo'}}</span>
+                                            <span *ngIf="!usuario.estado" class="customer-badge status-customer-badge status-unqualified">{{usuario.estado ? 'Activo': 'Inactivo'}}</span>
+                                        </td>
+                                        <td style="text-align: center">
+                                            <button pButton 
+                                                    type="button" 
+                                                    class="p-button-outlined p-button-secondary p-button-sm"
+                                                    icon="pi pi-key" 
+                                                    (click)="openDialogActualizarPassword(usuario)"
+                                                    title="Actualizar contaseña Usuario">
+                                            </button>
+                                            <button pButton 
+                                                    type="button" 
+                                                    class="p-button-outlined p-button-info p-button-sm"
+                                                    icon="pi pi-pencil" 
+                                                    (click)="openDialogEditarUsuario(usuario)"
+                                                    title="Editar Usuario">
+                                            </button>
+                                            <button pButton 
+                                                    type="button" 
+                                                    class="p-button-outlined p-button-danger p-button-sm" 
+                                                    icon="pi pi-trash"
+                                                    (click)="deleteUsuario(usuario)" 
+                                                    title="Eliminar Usuario">
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr class="p-text-center">
+                                        <td colspan="8">
+                                            <p-messages severity="info">
+                                                <ng-template pTemplate>
+                                                    <span class="custom-message"> No existe información asociada!</span>
+                                                </ng-template>
+                                            </p-messages>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+        
                 </div>
             </div>
-
         </div>
-    </div>
-</div>
+    </p-tabPanel>
+</p-tabView>
+
+
+<!-- Pantalla Principal -->
+
 <!-- Pantalla Principal -->
 
 <!-- Dialog Crear - Actualizar -->
-<p-dialog header="{{titulo}}" [(visible)]="dialogUsuario" [modal]="true" [style]="{width: '40vw'}" [draggable]="true"
+<p-dialog header="{{titulo}}" [(visible)]="dialogUsuario" [modal]="true" [style]="{width: '50vw'}" [draggable]="true"
     [resizable]="false">
 
     <form #usuarioForm="ngForm">
@@ -125,25 +166,30 @@
                             <small *ngIf="username.invalid && (username.touched || username.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
                         </div>
                         <div class="p-col-12 p-md-4">
-                            <div class="p-field p-text-center">
-                                <label for="activo">Activo</label>
-                                <br>
-                                <p-checkbox name="group1"  id="estado" [(ngModel)]="usuario.estado" [binary]="true" name="estado"></p-checkbox>
+                            <div class="p-field">
+                                <label for="name">Password</label>
+                                <input type="text" pInputText placeholder="Contasenia" [(ngModel)]="usuario.password" name="password">
                             </div>
                         </div>
-                        <div class="p-col-12 p-md-6">
+                        <div class="p-col-12 p-md-4">
                             <div class="p-field">
                                 <label for="name">Nombres</label>
                                 <input type="text" #nombre="ngModel" pInputText placeholder="Nombres" [(ngModel)]="usuario.nombre" name="nombre" required>
                             </div>
                             <small *ngIf="nombre.invalid && (nombre.touched || nombre.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
                         </div>
-                        <div class="p-col-12 p-md-6">
+                        <div class="p-col-12 p-md-4">
                             <div class="p-field">
                                 <label for="name">Apellidos</label>
                                 <input type="text" #apellido="ngModel" pInputText placeholder="Apellidos" [(ngModel)]="usuario.apellido" name="apellido" required>
                             </div>
                             <small *ngIf="apellido.invalid && (apellido.touched || apellido.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
+                        </div>
+                        <div class="p-col-12 p-md-4">
+                            <div class="p-field">
+                                <label for="name">Telefono</label>
+                                <input type="text" pInputText placeholder="Telefono" [(ngModel)]="usuario.telefono" name="telefono">
+                            </div>
                         </div>
                         <div class="p-col-12 p-md-6">
                             <div class="p-field">
@@ -165,14 +211,39 @@
                         </div>
                         <div class="p-col-12 p-md-6">
                             <div class="p-field">
-                                <label for="name">Telefono</label>
-                                <input type="text" pInputText placeholder="Telefono" [(ngModel)]="usuario.telefono" name="telefono">
+                                <label for="name">Empresas</label>
+                                <p-multiSelect name="empresas" 
+                                                [options]="lugares" 
+                                                [(ngModel)]="usuario.empresas" 
+                                                defaultLabel="Seleccione una empresa" 
+                                                optionLabel="nombre" 
+                                                class="multiselect-custom">
+                                    <ng-template let-value pTemplate="selectedItems">
+                                        <div class="country-item country-item-value" *ngFor="let option of usuario.empresas">
+                                            <div>{{option.nombre}}</div>
+                                        </div>
+                                        <div *ngIf="!usuario.empresas || usuario.empresas.length === 0" class="country-placeholder">
+                                            Seleccione una empresa
+                                        </div>
+                                    </ng-template>
+                                    <div *ngFor="let empresa of lugares">
+                                        <div>{{empresa}}</div>
+                                    </div>
+                                </p-multiSelect>
                             </div>
                         </div>
-                        <div class="p-col-12 p-md-12">
+                        
+                        <div class="p-col-12 p-md-8">
                             <div class="p-field">
                                 <label for="name">Observaciones</label>
                                 <textarea rows="5" cols="30" placeholder="Observaciones" pInputTextarea [(ngModel)]="usuario.observacion" name="observacion"></textarea>
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-4">
+                            <div class="p-field p-text-center">
+                                <label for="activo">Activo</label>
+                                <br>
+                                <p-checkbox name="group1"  id="estado" [(ngModel)]="usuario.estado" [binary]="true" name="estado"></p-checkbox>
                             </div>
                         </div>
                     </div>
@@ -202,7 +273,7 @@
                 icon="pi pi-save" 
                 class="p-button-success p-button-sm" 
                 type="button"
-                (click)='updatePersona()' 
+                (click)='updateUsuario()' 
                 *ngIf="usuario.id" 
                 label="Actualizar"
                 [disabled]="!usuarioForm.form.valid">
@@ -212,3 +283,54 @@
 
 </p-dialog>
 <!-- Dialog Crear - Actualizar -->
+
+
+<p-dialog header="{{titulo}}" [(visible)]="dialogCambioPassword" [modal]="true" [style]="{width: '30vw'}" [draggable]="true"
+    [resizable]="false">
+
+
+    <form #usuarioForm="ngForm">
+        <div class="p-grid p-fluid">
+            <div class="p-col-12">
+                <div class="card">
+                    <div class="p-grid p-fluid">
+                        <div class="p-col-12 p-md-12">
+                            <div class="p-field">
+                                <label for="name">Password</label>
+                                <input type="text" 
+                                        #password="ngModel" 
+                                        pInputText 
+                                        placeholder="Contraseña" 
+                                        [(ngModel)]="usuarioPass.password" 
+                                        name="password" 
+                                        required>
+                            </div>
+                            <small *ngIf="password.invalid && (password.touched || password.dirty)" class="p-invalid">Este campo no puede estar vacio </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <p-footer>
+        <button pButton 
+                (click)="dialogCambioPassword=false" 
+                class="p-button-danger p-button-sm"
+                type="button" 
+                label="Cancelar" 
+                icon="pi pi-times">
+        </button>
+
+        <button pButton 
+                icon="pi pi-save" 
+                class="p-button-success p-button-sm" 
+                type="button"
+                (click)='cambiarPass()' 
+                *ngIf="usuario.id" 
+                label="Actualizar"
+                [disabled]="!usuarioForm.form.valid">
+        </button>
+    </p-footer>
+
+</p-dialog>

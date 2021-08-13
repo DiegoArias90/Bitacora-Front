@@ -17,19 +17,5 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  bitacora(){
-    this.router.navigate(['/dashboard/bitacora']);
-  }
-
-  residentes(){
-    this.router.navigate(['/dashboard/residentes']);
-  }
-
-  eventos(){
-    this.router.navigate(['/dashboard/eventos']);
-  }
-  empleados(){
-    this.router.navigate(['/dashboard/empleados']);
-  }
 
 }

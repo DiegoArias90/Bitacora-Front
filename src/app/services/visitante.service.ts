@@ -52,4 +52,26 @@ export class VisitanteService {
     );
   }
 
+  // buscarAntecedentes( visitante: Visitante ){
+  //   return this.http.get<any>( environment.URL_SERVICES + '/bitacora/searchAntecedentes/' + visitante.cedula +'/'+ visitante.tipoIdentificacion ).pipe(
+  //     catchError( e=> {
+  //        if( e.status == 400 ){
+  //          return throwError(e);
+  //        }
+  //       return throwError(e);
+  //     })
+  //   );
+  // }
+
+  // buscarVeiculoPlaca ( placa: string){
+  //   return this.http.get<any>( environment.URL_SERVICES + '/bitacora/searchVehiculo/' + placa ).pipe(
+  //     catchError( e=> {
+  //        if( e.status == 400 ){
+  //          return throwError(e);
+  //        }
+  //       return throwError(e);
+  //     })
+  //   );
+  // }
+
 }

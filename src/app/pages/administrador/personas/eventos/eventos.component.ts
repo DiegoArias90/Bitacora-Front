@@ -37,6 +37,27 @@ export class EventosComponent implements OnInit {
   }
 
 
+  descargarExcel(evento: Evento){
+    const filename = evento.listaInvitado;   
+      this.eventoService.downloadListaEvento(filename).subscribe( resp => {
+        this.manageExcelFile( resp, filename );
+      });
+  }
+
+  manageExcelFile( resp: any, filename: string ){
+    const dataType = resp.type;
+    const binaryData = [];
+
+    binaryData.push(resp);
+    const filePath = window.URL.createObjectURL( new Blob( binaryData, { type: dataType } ) )
+    const downloadPah = document.createElement('a');
+    downloadPah.href = filePath;
+    downloadPah.setAttribute('download', filename);
+    document.body.appendChild(downloadPah);
+    downloadPah.click();
+  }
+
+
 
  
 

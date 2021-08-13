@@ -11,6 +11,9 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { Acompaniantes } from '../../models/acompaniantes';
 import { Autorizacion } from '../../models/autorizacion';
 import { Usuario } from 'src/app/models/usuario';
+import { CotejarInfoService } from '../../services/cotejar-info.service';
+import { Empresa } from '../../models/empresa';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 
 
@@ -21,49 +24,73 @@ import { Usuario } from 'src/app/models/usuario';
 })
 export class BitacoraComponent implements OnInit {
 
-  usserLogged: Usuario;
+ //Personas
+    personas: Persona[];
+    filteredPersonas: Persona[];
 
-  //BUSQUEDA
-  selectedPersonas: any[];
-  selectedVisitantes: any[];
-  selectedVehiculoVisitantes: any[];
+  //Visitantes
+    visitantes: Visitante[];
+    visitanteNuevo: Visitante = new Visitante();
+    dataVisitante: Visitante = new Visitante();
+    filteredVisitates: any[];
+    dialogVisitante = false;
 
-  autorizados: Autorizacion[];
-  selectedAutorizados: Autorizacion;
+    autorizados: Autorizacion[];
 
-  filteredPersonas: Persona[];
-  filteredVisitates: any[];
-  filteredVehiculoVisitates: any[];
+  //Vehiculos Visitas
+    filteredVehiculoVisitates: any[];
+    vehiculoVisitante: VehiculoV[];
+    vehiculoNuevo: VehiculoV = new VehiculoV();
+    dataVehiculo: VehiculoV = new VehiculoV();
+    dialogVehiculo = false;
+
+    vehiculoBuscar: VehiculoV[];
 
 
-  personas: Persona[];
-  visitantes: Visitante[];
-  vehiculoVisitante: VehiculoV[];
-  vehiculoNuevo: VehiculoV = new VehiculoV();
-  motivos: Motivo[];
-  bitacoras: Bitacora[];
-  bitacorasOrdenadas: Bitacora[];
+  //Bitacora
+    bitacoras: Bitacora[];
+    bitacorasOrdenadas: Bitacora[];
+    tipoBitacora: string = "VEHICULAR";
+    selectedbitacoras: Bitacora[];
+    bitacora: Bitacora = new Bitacora();
+    nombrePj: any
 
-  tipoBitacora: string = "VEHICULAR";
-  selectedbitacoras: Bitacora[];
-  bitacora: Bitacora = new Bitacora();
-  acompaniantes: Acompaniantes = new Acompaniantes();
+  //Pasajeros
+  acompaniantes: FormArray;
   acompaniante: any;
+  dialogPasajeros = false;
+  formPasajeros: FormGroup;
 
-  visitanteNuevo: Visitante = new Visitante();
+  skillsForm: FormGroup;
 
+  //Adicionales
+  selectedAutorizados: Autorizacion;
+  motivos: Motivo[];
+  loading: boolean = false;
 
-  dialogVisitante = false;
-  dialogVehiculo = false;
-
-
-
+  
   constructor(
     private personaService: PersonaService,
     private bitacoraService: BitacoraService,
     private visitanteService: VisitanteService,
-    private authService: AuthService,
-  ) { }
+    public authService: AuthService,
+    private cotejarInfoService: CotejarInfoService,
+    private fb: FormBuilder
+  ) { 
+
+  }
+
+  addPj(){
+    let nuevoPj = new Acompaniantes();
+        nuevoPj.nombre = this.nombrePj;
+      this.bitacora.acompaniates.push( nuevoPj );
+      console.log( this.bitacora.acompaniates);
+      
+  }
+  
+
+  
+  
 
 
   ngOnInit(): void {
@@ -71,10 +98,14 @@ export class BitacoraComponent implements OnInit {
     this.getMotivos();
     this.getVisitantes();
     this.getVehiculoVisitantes();
-    this.getBitacorasOrdenadas();
+    //this.getBitacorasOrdenadas();
+    this.getBitacoraByEmpresa();
     this.getAutorizados();
     this.getAcompaniante();
   }
+
+
+  
 
   getAutorizados(){
     this.autorizados = [
@@ -117,9 +148,21 @@ export class BitacoraComponent implements OnInit {
    }
 
    getVehiculoVisitantes(){
-     this.visitanteService.getVehiculoVisitantes().subscribe( vehiculos => {
-       this.vehiculoVisitante = vehiculos;     
-     });
+    this.visitanteService.getVehiculoVisitantes().subscribe( vehiculos => {
+      this.vehiculoVisitante = vehiculos; 
+      this.vehiculoBuscar = vehiculos;          
+    });
+  }
+
+
+   pasajeros(e){
+     let pj = e.valor;
+     if(pj === 'Si'){
+      this.dialogPasajeros = true;
+     } else {
+      this.dialogPasajeros = false;
+     }
+     return this.dialogPasajeros;
    }
 
   filterPersona(event) {
@@ -147,20 +190,26 @@ export class BitacoraComponent implements OnInit {
    }
 
    filterVehiculo(event) {
-     const filtered: any[] = [];
-     const query = event.query;
-     for (let i = 0; i < this.vehiculoVisitante.length; i++) {
-         const vehiculo = this.vehiculoVisitante[i];
-         if (vehiculo.placa.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-             filtered.push(vehiculo);
-         }        
-     }
-     this.filteredVehiculoVisitates = filtered;    
-   }
+    const filtered: any[] = [];
+    const query = event.query;
+    for (let i = 0; i < this.vehiculoBuscar.length; i++) {
+        const vehiculo = this.vehiculoBuscar[i];
+        if (vehiculo.placa.toLowerCase().indexOf(query.toLowerCase()) === 0 ) {
+            filtered.push(vehiculo);
+        }        
+    }
+    this.filteredVehiculoVisitates = filtered;    
+  }
 
   
-  getBitacorasOrdenadas(){
-    this.bitacoraService.getBitacoraOrdenada().subscribe( bitacoras => {
+  // getBitacorasOrdenadas(){
+  //   this.bitacoraService.getBitacoraOrdenada().subscribe( bitacoras => {
+  //     this.bitacorasOrdenadas = bitacoras;
+  //   });
+  // }
+
+  getBitacoraByEmpresa(){
+    this.bitacoraService.getBitacorasByEmpresa().subscribe( bitacoras => {
       this.bitacorasOrdenadas = bitacoras;
     });
   }
@@ -192,20 +241,24 @@ export class BitacoraComponent implements OnInit {
       newbitacora.persona = this.bitacora.persona;
       newbitacora.visitante = this.bitacora.visitante;
       newbitacora.vehiculoVisitante = this.bitacora.vehiculoVisitante ? this.bitacora.vehiculoVisitante : null;
-      newbitacora.acompaniante = this.bitacora.acompaniante ? this.bitacora.acompaniante : 'No';
+      newbitacora.acompaniante = this.bitacora.acompaniante ? this.bitacora.acompaniante : 'NO';
+      newbitacora.acompaniates = this.bitacora.acompaniates ? this.bitacora.acompaniates : null;
       newbitacora.motivo = this.bitacora.motivo;
       newbitacora.autorizadoPor = this.selectedAutorizados.nombre;
-      newbitacora.novedad = (this.bitacora.novedad != null ? this.bitacora.novedad.toUpperCase().trim() : this.bitacora.novedad);
-      // newbitacora.usuario = this.authService.usuario; 
-            this.bitacoraService.crearBitacora(newbitacora).subscribe( resp => {
-             Swal.fire({
-               icon: 'success',
-               title: resp.msg,
-               timer: 1500
-            })
-              this.cleanForm();
-             this.getBitacorasOrdenadas(); 
-            });
+      newbitacora.novedad = (this.bitacora.novedad != null ? this.bitacora.novedad.toUpperCase().trim() : "");
+      newbitacora.empresa_id = (this.authService.empresa); 
+      console.log(newbitacora);
+      
+            //  this.bitacoraService.crearBitacora(newbitacora).subscribe( resp => {
+            //    console.log(resp);
+            //   Swal.fire({
+            //     icon: 'success',
+            //     title: resp.msg,
+            //     timer: 1500
+            //  })
+            //    this.cleanForm();
+            //   this.getBitacoraByEmpresa(); 
+            //  });
    }
 
   updateBitacora(bitacora: Bitacora){
@@ -221,7 +274,7 @@ export class BitacoraComponent implements OnInit {
                   title: 'El visitante a salido!',
                   timer: 1500
                 });
-                this.getBitacorasOrdenadas();
+                this.getBitacoraByEmpresa();
               } else {
                 Swal.fire({
                   icon: 'error',
@@ -258,34 +311,77 @@ export class BitacoraComponent implements OnInit {
       this.bitacora.acompaniante = "No"
     }
     this.bitacora.motivo = null;
-    this.bitacora.autorizadoPor = null
+    this.bitacora.autorizadoPor = ""
+  }
+
+  cleanFormVehiculo(){
+    this.vehiculoNuevo.placa = '';
+    this.dataVehiculo.tipoVehiculo =  '';
+    this.dataVehiculo.marca =  '';
+    this.dataVehiculo.anioAuto =  '';
+    this.dataVehiculo.color =  '';
+    this.dataVehiculo.modelo =  '';
+    this.dataVehiculo.detalle =  '';
+  }
+
+  cleanFormVisitante(){
+    this.visitanteNuevo.cedula = '';
+    this.dataVisitante.antecedentes =  '';
+    this.dataVisitante.nombre =  '';
   }
 
    crearVehiculo(){
+    this.loading = true;
      let newVehiculo = new VehiculoV();
-     newVehiculo.placa = (this.vehiculoNuevo.placa != null ? this.vehiculoNuevo.placa.toUpperCase().trim() : this.vehiculoNuevo.placa);
-     newVehiculo.tipoVehiculo = this.vehiculoNuevo.tipoVehiculo.toUpperCase().trim();
-     newVehiculo.marca = this.vehiculoNuevo.marca.toUpperCase().trim();
-     newVehiculo.color = this.vehiculoNuevo.color.toUpperCase().trim();
-     newVehiculo.modelo = this.vehiculoNuevo.modelo.toUpperCase().trim();
-     newVehiculo.detalle = this.vehiculoNuevo.detalle.toUpperCase().trim(); 
+     newVehiculo.placa = (this.dataVehiculo.placa != null ? this.dataVehiculo.placa.toUpperCase().trim() : this.dataVehiculo.placa);
+     newVehiculo.tipoVehiculo = this.dataVehiculo.tipoVehiculo!= null ? this.dataVehiculo.tipoVehiculo.toUpperCase().trim() : this.dataVehiculo.tipoVehiculo;
+     newVehiculo.marca = this.dataVehiculo.marca != null ? this.dataVehiculo.marca.toUpperCase().trim() : this.dataVehiculo.marca;
+     newVehiculo.anioAuto = this.dataVehiculo.anioAuto != null ? this.dataVehiculo.anioAuto : this.dataVehiculo.anioAuto;
+     newVehiculo.color = this.dataVehiculo.color != null ? this.dataVehiculo.color.toUpperCase().trim() : this.dataVehiculo.color;
+     newVehiculo.modelo = this.dataVehiculo.modelo != null ? this.dataVehiculo.modelo.toUpperCase().trim() : this.dataVehiculo.modelo;
+     newVehiculo.detalle = this.dataVehiculo.detalle != null ? this.dataVehiculo.detalle.toUpperCase().trim() : this.dataVehiculo.detalle;
      this.visitanteService.crearVehiculo(newVehiculo).subscribe( resp => {
+      this.loading = false;
        Swal.fire({
          icon: 'success',
          title: resp.msg,
          text: `${this.vehiculoNuevo.placa}`,
          showConfirmButton: true,
        });
+       
        this.getVehiculoVisitantes();
        this.dialogVehiculo = false;
+       this.cleanFormVehiculo();
+       
+     }, err => {
+
+      if(err.status == 400){
+        this.loading = false;
+        Swal.fire({
+          icon: 'error',
+          title: 'Campos vacios',
+          text: err.error.errors[0],
+          showConfirmButton: true,
+        });
+      }
+
+      if(err.status == 500){
+        this.loading = false;
+        Swal.fire({
+          icon: 'warning',
+          title: 'Datos duplicados',
+          text: 'La placa ingresada ya exite!',
+          showConfirmButton: true,
+        });
+      }
      });
    }
 
    crearVisitante(){
      let newVisitante = new Visitante();
-     newVisitante.cedula = (this.visitanteNuevo.cedula != null ? this.visitanteNuevo.cedula.toUpperCase().trim() : this.visitanteNuevo.cedula);
-     newVisitante.antecedentes = this.visitanteNuevo.antecedentes.toUpperCase().trim();
-     newVisitante.nombre = this.visitanteNuevo.nombre.toUpperCase().trim();
+     newVisitante.cedula = (this.visitanteNuevo.cedula != null ? this.visitanteNuevo.cedula.trim() : this.visitanteNuevo.cedula);
+     newVisitante.antecedentes = this.dataVisitante.antecedentes;
+     newVisitante.nombre =  this.dataVisitante.nombre;
      this.visitanteService.crearVisitante(newVisitante).subscribe( resp => {
        Swal.fire({
          icon: 'success',
@@ -294,8 +390,128 @@ export class BitacoraComponent implements OnInit {
          showConfirmButton: true,
        })
        this.getVisitantes();
+       this.cleanFormVisitante();
        this.dialogVisitante = false;
+     }, err => {
+
+      if(err.status == 400){
+        Swal.fire({
+          icon: 'error',
+          title: 'Campos vacios',
+          text: err.error.errors[0],
+          showConfirmButton: true,
+        });
+      }
+
+      if(err.status == 500){
+        Swal.fire({
+          icon: 'warning',
+          title: 'Datos duplicados',
+          text: 'La cédula ingresada ya exite!',
+          showConfirmButton: true,
+        });
+      }
      });
+   }
+
+
+   buscarAntecedentes(){
+     this.loading = true;
+    let antecedentesVisitante = new Visitante();    
+    antecedentesVisitante.cedula = this.visitanteNuevo.cedula;
+    if(  antecedentesVisitante.cedula === undefined  ){
+      Swal.fire({
+        icon: 'error',
+        title: 'Información Incorrecta',
+        text: 'Debe ingresar una cédula',
+        showConfirmButton: true,
+      });
+      this.loading = false;
+      return;
+    }
+
+     this.cotejarInfoService.buscarAntecedentes(antecedentesVisitante).subscribe( persona => {
+      
+        if(persona[0].error.length > 0){
+          this.loading = false;
+          Swal.fire({
+            icon: 'error',
+            title: 'Información Incorrecta',
+            text: 'Debe ingresar una cedula valida',
+            showConfirmButton: true,
+          });
+         
+        }else if( persona[0].antecedent === 'SI' ){
+          this.loading = false;
+          Swal.fire({
+            icon: 'warning',
+            title: 'Persona con antecedentes',
+            text: 'La persona no debe ingresar',
+            showConfirmButton: true,
+          });
+         
+        } else {
+          this.loading = false;
+          this.dataVisitante.antecedentes = persona[0].antecedent;
+          this.dataVisitante.nombre = persona[0].name;
+        }
+
+        
+     }, err => {
+       console.log(err);
+       
+     });
+   }
+
+
+   buscarVehiculoPlacas(){
+    this.loading = true;
+    let datosVehiculo = new VehiculoV();
+    datosVehiculo.placa = this.vehiculoNuevo.placa;
+    if(  datosVehiculo.placa === undefined  ){
+      this.loading = false;
+      Swal.fire({
+        icon: 'error',
+        title: 'Información Incorrecta',
+        text: 'Debe ingresar una placa',
+        showConfirmButton: true,
+      });
+      return;
+    }
+    
+    this.cotejarInfoService.buscarVehiculoPlaca( datosVehiculo.placa ).subscribe( datosVehiculos => {
+
+        if(datosVehiculos.numeroPlaca == null){
+          this.loading = false;
+          Swal.fire({
+            icon: 'error',
+            title: 'Información Incorrecta',
+            text: 'Debe ingresar una placa valida',
+            showConfirmButton: true,
+          });
+          return;
+        }
+        this.loading = false;
+        this.dataVehiculo.placa = datosVehiculos.numeroPlaca;
+        this.dataVehiculo.tipoVehiculo = datosVehiculos.nombreClase;
+        this.dataVehiculo.marca = datosVehiculos.descripcionMarca;
+        this.dataVehiculo.color = datosVehiculos.colorVehiculo1;
+        this.dataVehiculo.modelo = datosVehiculos.descripcionModelo;
+        this.dataVehiculo.anioAuto = datosVehiculos.anioAuto;
+      
+    }, err => {
+      if(err.status == 400){
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Campos vacios',
+          text: err.error.errors,
+          showConfirmButton: true,
+        });
+        this.loading = false;
+      }
+      
+    });   
    }
   
 }

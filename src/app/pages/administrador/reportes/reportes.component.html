@@ -1,1 +1,391 @@
-<p>reportes works!</p>
+<p-tabView>
+    <p-tabPanel header="Reporte General">
+
+        <div class="p-grid">
+            <div class="p-col-12 p-md-10">
+                <div class="card">
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col-12 p-md-5">
+                            <label for="firstname6">Fecha Inicio</label>
+                            <p-calendar name="fecha"  
+                                        dateFormat="yy-mm-dd" 
+                                        required [class.is-invalid]=""
+                                        showIcon="true"
+                                        [(ngModel)]="reporteG.fechaInicio">
+                            </p-calendar>
+                        </div>
+                        <div class="p-field p-col-12 p-md-5">
+                            <label for="lastname6">Fecha Fin</label>
+                            <p-calendar name="fecha"  
+                                        dateFormat="yy-mm-dd" 
+                                        required [class.is-invalid]=""
+                                        showIcon="true"
+                                        [(ngModel)]="reporteG.fechaFin">
+                            </p-calendar>
+                        </div>
+                        <div class="p-field p-col-12 p-md-2">
+                            <label for="address">Consultar</label>
+                            <br>
+                            <p-button icon="pi pi-search"  
+                                      title="Consultar" 
+                                      class="p-button-sm"
+                                      (click)="informeGeneral()">
+                            </p-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-col-12 p-md-2">
+                <div class="card">
+                    <label for="Exportar">Exportar</label>
+                    <div class="p-formgroup-inline">
+                        <div class="p-field">
+                            <button pButton 
+                                    type="button" 
+                                    icon="pi pi-file-pdf"
+                                    title="Exportar Pdf"   
+                                    class="p-button-danger p-button-sm">
+                            </button>
+                        </div>
+                        <div class="p-field">
+                            <button pButton 
+                                    type="button" 
+                                    icon="pi pi-file-excel"
+                                    title="Exportar Excel"  
+                                    class="p-button-success p-button-sm">
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-grid table-demo">
+            <div class="p-col-12">
+                <div class="card">
+                    <p-table #dt  dataKey="id"
+                             styleClass="p-datatable-customers" 
+                             [rowHover]="true" [rows]="10" [paginator]="true"
+                             [filterDelay]="0">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Fecha ingreso</th>
+                                <th>Hora ingreso</th>
+                                <th>Tipo bitacora</th>
+                                <th>Vehiculo</th>
+                                <th>Motivo</th>
+                                <th>Visitante</th>
+                                <th>Persona</th>
+
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-customer>
+                            <tr class="p-selectable-row">
+                                <td>
+                                    <span class="p-column-title">Fecha ingreso</span>
+                                    {{customer.name}}
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Hora ingreso</span>
+                                    
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Tipo bitacora</span>
+                                   
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Vehiculo</span>
+                                    {{customer.date}}
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Motivo</span>
+                                    <span [class]="'customer-badge status-' + customer.status">{{customer.status}}</span>
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Visitante</span>
+                                    <p-progressBar [value]="customer.activity" [showValue]="false"></p-progressBar>
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Persona</span>
+                                    <p-progressBar [value]="customer.activity" [showValue]="false"></p-progressBar>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr class="p-text-center">
+                                <td colspan="8">
+                                    <p-messages severity="info">
+                                        <ng-template pTemplate>
+                                            <span class="custom-message"> No existe información asociada!</span>
+                                        </ng-template>
+                                    </p-messages>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel header="Reporte por Persona">
+        <div class="p-grid">
+            <div class="p-col-12 p-md-10">
+                <div class="card">
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col-12 p-md-4">
+                            <label for="firstname6">Persona</label>
+                            <input type="text" 
+                                   pInputText 
+                                   placeholder="Persona" 
+                                   name="cedula" 
+                                   required>
+                        </div>
+                        <div class="p-field p-col-12 p-md-3">
+                            <label for="firstname6">Fecha Inicio</label>
+                            <p-calendar name="fecha"  
+                                        dateFormat="yy-mm-dd" 
+                                        required [class.is-invalid]=""
+                                        showIcon="true">
+                            </p-calendar>
+                        </div>
+                        <div class="p-field p-col-12 p-md-3">
+                            <label for="lastname6">Fecha Fin</label>
+                            <p-calendar name="fecha"  
+                                        dateFormat="yy-mm-dd" 
+                                        required [class.is-invalid]=""
+                                        showIcon="true">
+                            </p-calendar>
+                        </div>
+                        <div class="p-field p-col-12 p-md-2">
+                            <label for="address">Consultar</label>
+                            <br>
+                            <p-button icon="pi pi-search"  
+                                      title="Consultar" 
+                                      class="p-button-sm">
+                            </p-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-col-12 p-md-2">
+                <div class="card">
+                    <label for="Exportar">Exportar</label>
+                    <div class="p-formgroup-inline">
+                        <div class="p-field">
+                            <button pButton 
+                                    type="button" 
+                                    icon="pi pi-file-pdf"
+                                    title="Exportar Pdf"   
+                                    class="p-button-danger p-button-sm">
+                            </button>
+                        </div>
+                        <div class="p-field">
+                            <button pButton 
+                                    type="button" 
+                                    icon="pi pi-file-excel"
+                                    title="Exportar Excel"  
+                                    class="p-button-success p-button-sm">
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-grid table-demo">
+            <div class="p-col-12">
+                <div class="card">
+                    <p-table #dt  dataKey="id"
+                             styleClass="p-datatable-customers" 
+                             [rowHover]="true" [rows]="10" [paginator]="true"
+                             [filterDelay]="0">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Fecha ingreso</th>
+                                <th>Hora ingreso</th>
+                                <th>Tipo bitacora</th>
+                                <th>Vehiculo</th>
+                                <th>Motivo</th>
+                                <th>Visitante</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-customer>
+                            <tr class="p-selectable-row">
+                                <td>
+                                    <span class="p-column-title">Fecha ingreso</span>
+                                    {{customer.name}}
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Hora ingreso</span>
+                                    
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Tipo bitacora</span>
+                                   
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Vehiculo</span>
+                                    {{customer.date}}
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Motivo</span>
+                                    <span [class]="'customer-badge status-' + customer.status">{{customer.status}}</span>
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Visitante</span>
+                                    <p-progressBar [value]="customer.activity" [showValue]="false"></p-progressBar>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr class="p-text-center">
+                                <td colspan="8">
+                                    <p-messages severity="info">
+                                        <ng-template pTemplate>
+                                            <span class="custom-message"> No existe información asociada!</span>
+                                        </ng-template>
+                                    </p-messages>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel header="Reporte por Vehiculo">
+        <div class="p-grid">
+            <div class="p-col-12 p-md-10">
+                <div class="card">
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col-12 p-md-4">
+                            <label for="firstname6">Placa</label>
+                            <input type="text" 
+                                   pInputText 
+                                   placeholder="Placa" 
+                                   name="placa" 
+                                   required>
+                        </div>
+                        <div class="p-field p-col-12 p-md-3">
+                            <label for="firstname6">Fecha Inicio</label>
+                            <p-calendar name="fecha"  
+                                        dateFormat="yy-mm-dd" 
+                                        required [class.is-invalid]=""
+                                        showIcon="true">
+                            </p-calendar>
+                        </div>
+                        <div class="p-field p-col-12 p-md-3">
+                            <label for="lastname6">Fecha Fin</label>
+                            <p-calendar name="fecha"  
+                                        dateFormat="yy-mm-dd" 
+                                        required [class.is-invalid]=""
+                                        showIcon="true">
+                            </p-calendar>
+                        </div>
+                        <div class="p-field p-col-12 p-md-2">
+                            <label for="address">Consultar</label>
+                            <br>
+                            <p-button icon="pi pi-search"  
+                                      title="Consultar" 
+                                      class="p-button-sm">
+                            </p-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-col-12 p-md-2">
+                <div class="card">
+                    <label for="Exportar">Exportar</label>
+                    <div class="p-formgroup-inline">
+                        <div class="p-field">
+                            <button pButton 
+                                    type="button" 
+                                    icon="pi pi-file-pdf"
+                                    title="Exportar Pdf"   
+                                    class="p-button-danger p-button-sm">
+                            </button>
+                        </div>
+                        <div class="p-field">
+                            <button pButton 
+                                    type="button" 
+                                    icon="pi pi-file-excel"
+                                    title="Exportar Excel"  
+                                    class="p-button-success p-button-sm">
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-grid table-demo">
+            <div class="p-col-12">
+                <div class="card">
+                    <p-table #dt  dataKey="id"
+                             styleClass="p-datatable-customers" 
+                             [rowHover]="true" [rows]="10" [paginator]="true"
+                             [filterDelay]="0">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Fecha ingreso</th>
+                                <th>Hora ingreso</th>
+                                <th>Tipo bitacora</th>
+                                <th>Vehiculo</th>
+                                <th>Motivo</th>
+                                <th>Visitante</th>
+                                <th>Persona</th>
+
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-customer>
+                            <tr class="p-selectable-row">
+                                <td>
+                                    <span class="p-column-title">Fecha ingreso</span>
+                                    {{customer.name}}
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Hora ingreso</span>
+                                    
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Tipo bitacora</span>
+                                   
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Vehiculo</span>
+                                    {{customer.date}}
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Motivo</span>
+                                    <span [class]="'customer-badge status-' + customer.status">{{customer.status}}</span>
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Visitante</span>
+                                    <p-progressBar [value]="customer.activity" [showValue]="false"></p-progressBar>
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Persona</span>
+                                    <p-progressBar [value]="customer.activity" [showValue]="false"></p-progressBar>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr class="p-text-center">
+                                <td colspan="8">
+                                    <p-messages severity="info">
+                                        <ng-template pTemplate>
+                                            <span class="custom-message"> No existe información asociada!</span>
+                                        </ng-template>
+                                    </p-messages>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </p-tabPanel>
+</p-tabView>

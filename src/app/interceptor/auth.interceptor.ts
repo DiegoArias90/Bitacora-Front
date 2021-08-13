@@ -23,15 +23,27 @@ export class AuthInterceptor implements HttpInterceptor {
       
     return next.handle(req).pipe(
       catchError( e => {
+
         if( e.status == 401 ){
-          if( this.authService.isAuthenticated() ){
-            this.authService.logout();
-          }
-          this.router.navigate(['/login']);
-        }
-        if( e.status == 403 ){
-          this.router.navigate(['/dashboard']);
-        }
+           if( this.authService.isAuthenticated() ){
+             Swal.fire({
+               icon: 'error',
+               title: 'Acceso no autorizado',
+               showConfirmButton: true,
+             })
+             this.authService.logout();
+           }
+           this.router.navigate(['/login']);
+         }
+         if( e.status == 403 ){
+           Swal.fire({
+             icon: 'error',
+             title: 'Acceso restingido',
+             text: 'El usuario no tiene el perfil requerido',
+             showConfirmButton: true,
+           })
+           this.router.navigate(['/login']);
+         }
         return throwError(e);
       })
     )

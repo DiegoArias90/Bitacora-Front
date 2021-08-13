@@ -1,7 +1,6 @@
 <!-- Pantalla Principal -->
 <div class="p-grid">
     <div class="p-col-12" >
-        <!--Empleados por Propietario -->
         <div class="p-grid table-demo" *ngIf="eventos">
             <div class="p-col-12">
                 <p-messages severity="info" *ngIf="eventos.length == 0 ">
@@ -12,7 +11,7 @@
                 <div class="card" *ngIf="eventos.length > 0 ">
                     <p-table #dt dataKey="id" [value]="eventos"
                         styleClass="p-datatable-customers" [rowHover]="true" [rows]="10" [paginator]="true"
-                        [filterDelay]="0" [globalFilterFields]="['cedula','nombre','apellido','lote']"
+                        [filterDelay]="0" [globalFilterFields]="['responsable','persona.lote','apellido','lote']"
                         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
                         [rowsPerPageOptions]="[10,25,50]" >
                         <ng-template pTemplate="caption">
@@ -35,35 +34,55 @@
                         <ng-template pTemplate="header">
                             <tr>
                                 <th style="width: 3rem">#</th>
-                                <th>Identificación</th>
-                                <th>Nombres</th>
-                                <th>Apellidos</th>
-                                <th>Ocupacion</th>
+                                <th>Responsable</th>
                                 <th>Lote</th>
+                                <th>Evento</th>
+                                <th>Fecha Inicio</th>
+                                <th>Fecha Fin</th>
+                                <th>Hora Inicio</th>
+                                <th>Acciones</th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-evento let-rowIndex="rowIndex">
                             <tr class="p-selectable-row">
                                 <td >
+                                    <span class="p-column-title">#</span>
                                     {{ rowIndex + 1 }}
                                 </td>
                                 <td>
-                                    <span class="image-text"
-                                        style="margin-left: .5em;vertical-align: middle">{{empleado.cedula}}</span>
+                                    <span class="p-column-title">Responsable</span>
+                                    {{evento.responsable}}
                                 </td>
                                 <td>
-                                    <span class="image-text"
-                                        style="margin-left: .5em;vertical-align: middle">{{empleado.nombre}}</span>
+                                    <span class="p-column-title">Lote</span>
+                                    {{evento.persona.lote}}
                                 </td>
                                 <td>
-                                    <span class="image-text"
-                                        style="margin-left: .5em;vertical-align: middle">{{empleado.apellido}}</span>
+                                    <span class="p-column-title">Evento</span>
+                                    {{evento.tipoEvento.nombreEvento}}
                                 </td>
-                                <td><span class="image-text"
-                                        style="margin-left: .5em;vertical-align: middle">{{empleado.tipoEmpleo.ocupacion}}</span>
+                                <td>
+                                    <span class="p-column-title">Fecha Inicio</span>
+                                    {{evento.fechaCreacion}}
                                 </td>
-                                <td><span class="image-text"
-                                    style="margin-left: .5em;vertical-align: middle">{{empleado.persona.lote}}</span>
+                                <td>
+                                    <span class="p-column-title">Fecha Fin</span>
+                                    {{evento.fechaFinalizacion}}
+                                </td>
+                                <td>
+                                    <span class="p-column-title">Hora Inicio</span>
+                                    {{evento.horaInicio}}
+                                </td>
+                                <td>
+                                    <button pButton 
+                                                pRipple 
+                                                type="button" 
+                                                icon="pi pi-download" 
+                                                class="p-button-rounded p-button-info p-button-text p-button-sm p-mr-2 p-mb-2" 
+                                                (click)="descargarExcel(evento)"
+                                                title="descargar"
+                                                *ngIf="evento.listaInvitado">
+                                        </button>
                                 </td>
                             </tr>
                         </ng-template>
@@ -71,7 +90,6 @@
                 </div>
             </div>
         </div>
-        <!--Empleados por Propietario -->
     </div>
 </div>
 <!-- Pantalla Principal -->

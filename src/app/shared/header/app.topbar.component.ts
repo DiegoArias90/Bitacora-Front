@@ -19,10 +19,11 @@ export class AppTopBarComponent implements OnInit{
         private authService: AuthService,
         private router: Router
         ) {
+            this.getDatos();
     }
     
     ngOnInit(): void {
-        this.getDatos();
+       // this.getDatos();
     
       }
 

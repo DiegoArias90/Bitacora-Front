@@ -1,11 +1,9 @@
-<!-- style="background-image:url(../../../assets/layout/images/login-register.jpg);" -->
-<section id="wrapper" class="login-register login-sidebar"  width="25%">
+<section id="wrapper" class="login-register login-sidebar"  width="25%"  style="background-image:url(../../../assets/layout/images/login-register.jpg);">
     <div class="login-box card">
         <div class="card-body">
             <form class="form-horizontal form-material" id="loginform" action="index.html">
                 <div class="p-mb-3 p-text-center">
-                    <!-- <img src="../../../assets/layout/images/logo-grunseg.png" alt="Home" /><br/><img src="../../../assets/layout/images/logo-texto.png" alt="Home" /> -->
-                    <a class="p-text-center"></a>
+                    <a class="p-text-center"><img src="../../../assets/layout/images/logo-grunseg.png" alt="Home" /><br/><img src="../../../assets/layout/images/logo-texto.png" alt="Home" /></a>
                 </div>
                 
                 <div class="p-fluid p-col-6 p-md-12">
@@ -14,11 +12,25 @@
                         <div class="p-col-12 p-md-9">
                             <input id="username" type="text" pInputText placeholder="username" #username name="username" [(ngModel)]="usuario.username">
                         </div>
-                    </div>
+                    </div>                   
                     <div class="p-field p-grid">
                         <label for="password" class="p-col-12 p-mb-3 p-md-3 p-mb-md-0">Contraseña</label>
                         <div class="p-col-12 p-md-9">
                             <input id="password" type="password" pInputText placeholder="password" name="password" [(ngModel)]="usuario.password">
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <label for="username" class="p-col-12 p-mb-3 p-md-3 p-mb-md-0">Empresas</label>
+                        <div class="p-col-12 p-md-9">
+                            <p-dropdown name="tipoPersonas" 
+                                        [options]="empresas" 
+                                        [(ngModel)]="usuario.empresas" 
+                                        optionLabel="nombre" 
+                                        optionValue="evento.id" 
+                                        [showClear]="true" 
+                                        placeholder="Seleccione empresa"
+                                        (onChange)=seleccionEmpresa($event)>
+                            </p-dropdown>
                         </div>
                     </div>
                 </div>

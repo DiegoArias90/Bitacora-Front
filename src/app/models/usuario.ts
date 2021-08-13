@@ -8,5 +8,6 @@ export class Usuario {
 	telefono: string;
 	observacion: string;
 	estado: boolean;
-	roles: string[] = [];
+	roles: string[] = []
+	empresas: any[] = [];
 }

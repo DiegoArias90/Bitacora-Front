@@ -46,18 +46,18 @@ export class VehiculoComponent implements OnInit {
   }
 
   openDialogCrearVehiculo(): void {
-    this.titulo = 'Registro Nuevo VehiculoP';
+    this.titulo = 'Registro Nuevo Vehiculo';
     this.getVehiculo(null);
     this.dialogVehiculoPropietario = true;
   }
 
   openDialogEditarVehiculo( vehiculo: VehiculoP ): void {
-    this.titulo = 'Actualizar Registro de VehiculoP';
+    this.titulo = 'Actualizar Registro de Vehiculo';
      this.getVehiculo(vehiculo.id);
      this.dialogVehiculoPropietario = true;
    }
 
-   crearVehiculoP(){
+   crearVehiculo(){
     let nuevoVehiculo = new VehiculoP();
     nuevoVehiculo.placa = (this.vehiculo.placa != null ? this.vehiculo.placa.toUpperCase().trim() : this.vehiculo.placa);
     nuevoVehiculo.modelo = (this.vehiculo.modelo != null ? this.vehiculo.modelo.toUpperCase().trim() : this.vehiculo.modelo);
